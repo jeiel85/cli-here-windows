@@ -5,12 +5,14 @@
 ### Added
 
 - Added a modern theme resource dictionary (`Themes/ModernTheme.xaml`) with color tokens and shared control styles.
+- Switched the main UI to a dark-only visual theme aligned with the reference app palette (`#0F1117`, `#1A1D2E`, `#2D2F45`, `#A78BFA`).
 
 ### Fixed
 
 - Changed release packaging to multi-file framework-dependent mode (`PublishSingleFile=false`) to avoid large single executable startup delays and packaging ambiguity.
 - Added startup deployment integrity check so incomplete installs (exe-only copy) fail fast with a clear recovery message.
 - Refreskinned the main settings window from default system-look layout to a card-based UI with clearer hierarchy and improved action affordance.
+- Refined control hierarchy in dark mode with secondary/danger button variants and dark list/header/input styling.
 
 ### Verification
 

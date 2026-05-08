@@ -27,8 +27,8 @@
                     <TextBlock Margin="0,2,0,0" Foreground="{StaticResource TextSecondaryBrush}" Text="{Binding SkippedUpdateLabel}"/>
                 </StackPanel>
                 <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
-                    <Button Content="{Binding CheckUpdateLabel}" Width="130" Margin="0,0,8,0" Command="{Binding CheckUpdateCommand}"/>
-                    <Button Content="{Binding ResetSkippedUpdateLabel}" Width="145" Command="{Binding ResetSkippedUpdateCommand}"/>
+                    <Button Style="{StaticResource SecondaryButtonStyle}" Content="{Binding CheckUpdateLabel}" Width="130" Margin="0,0,8,0" Command="{Binding CheckUpdateCommand}"/>
+                    <Button Style="{StaticResource SecondaryButtonStyle}" Content="{Binding ResetSkippedUpdateLabel}" Width="145" Command="{Binding ResetSkippedUpdateCommand}"/>
                 </StackPanel>
             </Grid>
         </Border>
@@ -133,11 +133,11 @@
                                             <GridViewColumn.CellTemplate>
                                                 <DataTemplate>
                                                     <StackPanel Orientation="Horizontal">
-                                                        <Button Margin="0,0,6,0"
+                                                        <Button Style="{StaticResource SecondaryButtonStyle}" Margin="0,0,6,0"
                                                                 Content="{Binding DataContext.InstallLinkLabel, RelativeSource={RelativeSource AncestorType=ListView}}"
                                                                 Command="{Binding DataContext.OpenInstallLinkCommand, RelativeSource={RelativeSource AncestorType=ListView}}"
                                                                 CommandParameter="{Binding}"/>
-                                                        <Button Content="{Binding DataContext.DocsLinkLabel, RelativeSource={RelativeSource AncestorType=ListView}}"
+                                                        <Button Style="{StaticResource SecondaryButtonStyle}" Content="{Binding DataContext.DocsLinkLabel, RelativeSource={RelativeSource AncestorType=ListView}}"
                                                                 Command="{Binding DataContext.OpenDocsLinkCommand, RelativeSource={RelativeSource AncestorType=ListView}}"
                                                                 CommandParameter="{Binding}"/>
                                                         <Button Margin="6,0,0,0"
@@ -161,9 +161,9 @@
 
         <Border Grid.Row="2" Style="{StaticResource CardStyle}" Margin="0,12,0,0">
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                <Button Content="{Binding RefreshLabel}" Width="100" Margin="0,0,8,0" Command="{Binding RefreshCommand}"/>
-                <Button Content="{Binding RemoveAllLabel}" Width="120" Margin="0,0,8,0" Command="{Binding RemoveAllCommand}"/>
-                <Button Content="{Binding RepairLabel}" Width="90" Margin="0,0,8,0" Command="{Binding RepairCommand}"/>
+                <Button Style="{StaticResource SecondaryButtonStyle}" Content="{Binding RefreshLabel}" Width="100" Margin="0,0,8,0" Command="{Binding RefreshCommand}"/>
+                <Button Style="{StaticResource DangerButtonStyle}" Content="{Binding RemoveAllLabel}" Width="120" Margin="0,0,8,0" Command="{Binding RemoveAllCommand}"/>
+                <Button Style="{StaticResource SecondaryButtonStyle}" Content="{Binding RepairLabel}" Width="90" Margin="0,0,8,0" Command="{Binding RepairCommand}"/>
                 <Button Content="{Binding ApplyLabel}" Width="100" Command="{Binding ApplyCommand}"/>
             </StackPanel>
         </Border>

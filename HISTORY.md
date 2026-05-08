@@ -35,6 +35,19 @@
 - 결과: 성공
 - 후속 작업: 다크/라이트 테마 전환 토글 및 ListView 상태 배지 커스텀 스타일 보강
 
+- 작업: 다크 고정 테마로 디자인 통일 (참고 앱 팔레트 반영)
+- 변경 파일:
+  - src/CliHere.App/Themes/ModernTheme.xaml
+  - src/CliHere.App/MainWindow.xaml
+  - CHANGELOG.md
+  - .agent/progress.md
+  - HISTORY.md
+- 검증:
+  - dotnet build --configuration Release
+  - Release 앱 실행 확인 (프로세스 기동/생존)
+- 결과: 성공
+- 후속 작업: 상태 배지(설치됨/미설치) 컬러 태그 UI와 다크 테마 대비 접근성 미세 조정
+
 ## 2026-05-08
 
 - 작업: CLI Here / CLI 여기서 열기 초기 설계 묶음 작성
