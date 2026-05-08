@@ -31,4 +31,17 @@ public sealed class TerminalLauncherTests
         Assert.Equal("runas", psi.Verb);
         Assert.Contains("-NoExit -Command \"codex\"", psi.Arguments, StringComparison.Ordinal);
     }
+
+    [Fact]
+    public void CreateStartInfo_WhenPowerShell7Selected_UsesAvailableShell()
+    {
+        ProcessStartInfo psi = TerminalLauncher.CreateStartInfo(
+            TerminalMode.PowerShell7,
+            runAsAdministrator: false,
+            workingDirectory: "C:\\Work Folder",
+            command: "codex");
+
+        Assert.True(psi.FileName is "pwsh.exe" or "powershell.exe");
+        Assert.Contains("-NoExit -Command \"codex\"", psi.Arguments, StringComparison.Ordinal);
+    }
 }

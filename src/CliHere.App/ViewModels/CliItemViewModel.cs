@@ -17,4 +17,6 @@ public sealed class CliItemViewModel
     public bool IsInstalled => DetectionResult.IsInstalled;
 
     public bool IsEnabled { get; set; }
+
+    public bool IsCustom => Id.StartsWith("custom-", StringComparison.OrdinalIgnoreCase);
 }

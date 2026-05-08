@@ -11,6 +11,7 @@ public enum TerminalMode
 {
     WindowsTerminal,
     PowerShell,
+    PowerShell7,
 }
 
 public sealed class AppSettings
@@ -20,4 +21,5 @@ public sealed class AppSettings
     public bool RunAsAdministrator { get; set; }
     public List<string> EnabledCliIds { get; set; } = [];
     public string? SkippedUpdateVersion { get; set; }
+    public List<CustomCliDefinition> CustomCliDefinitions { get; set; } = [];
 }

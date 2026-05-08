@@ -34,6 +34,35 @@ public sealed class LauncherServiceTests
         Assert.Equal(tempDir, fakeLauncher.LastWorkingDirectory);
     }
 
+    [Fact]
+    public void RunCli_WhenCustomCliId_CallsTerminalLauncherWithCustomExecutable()
+    {
+        FakeTerminalLauncher fakeLauncher;
+        SettingsService settingsService = new(Path.Combine(Path.GetTempPath(), "CliHere.Tests", Guid.NewGuid().ToString("N")));
+        settingsService.Save(new AppSettings
+        {
+            Terminal = TerminalMode.PowerShell,
+            CustomCliDefinitions =
+            [
+                new CustomCliDefinition
+                {
+                    Id = "custom-foo",
+                    DisplayName = "Foo CLI",
+                    ExecutableName = "foo",
+                    InstallUrl = "https://example.com/install",
+                    DocsUrl = "https://example.com/docs",
+                },
+            ],
+        });
+
+        LauncherService service = new(new CliDefinitionService(), settingsService, fakeLauncher = new FakeTerminalLauncher());
+        string tempDir = Path.Combine(Path.GetTempPath(), "CliHere.Tests", Guid.NewGuid().ToString("N"));
+        Directory.CreateDirectory(tempDir);
+
+        service.RunCli("custom-foo", tempDir);
+        Assert.Equal("foo", fakeLauncher.LastCommand);
+    }
+
     private static LauncherService CreateService(out FakeTerminalLauncher fakeLauncher)
     {
         fakeLauncher = new FakeTerminalLauncher();

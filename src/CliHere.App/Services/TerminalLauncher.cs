@@ -22,9 +22,11 @@ public sealed class TerminalLauncher : ITerminalLauncher
     internal static ProcessStartInfo CreateStartInfo(TerminalMode terminalMode, bool runAsAdministrator, string workingDirectory, string command)
     {
         bool useWindowsTerminal = terminalMode == TerminalMode.WindowsTerminal && IsWindowsTerminalAvailable();
-        string fileName = useWindowsTerminal ? "wt.exe" : "powershell.exe";
+        bool usePowerShell7 = terminalMode == TerminalMode.PowerShell7 && IsCommandAvailable("pwsh.exe");
+        string shellExecutable = usePowerShell7 ? "pwsh.exe" : "powershell.exe";
+        string fileName = useWindowsTerminal ? "wt.exe" : shellExecutable;
         string arguments = useWindowsTerminal
-            ? $"-d {Quote(workingDirectory)} powershell -NoExit -Command {Quote(command)}"
+            ? $"-d {Quote(workingDirectory)} {shellExecutable} -NoExit -Command {Quote(command)}"
             : $"-NoExit -Command {Quote(command)}";
 
         return new ProcessStartInfo
@@ -42,7 +44,9 @@ public sealed class TerminalLauncher : ITerminalLauncher
         return $"\"{value.Replace("\"", "\\\"", StringComparison.Ordinal)}\"";
     }
 
-    internal static bool IsWindowsTerminalAvailable()
+    internal static bool IsWindowsTerminalAvailable() => IsCommandAvailable("wt.exe");
+
+    internal static bool IsCommandAvailable(string fileName)
     {
         string? pathValue = Environment.GetEnvironmentVariable("PATH");
         if (string.IsNullOrWhiteSpace(pathValue))

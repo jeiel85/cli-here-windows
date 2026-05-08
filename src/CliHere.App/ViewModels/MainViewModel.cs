@@ -16,10 +16,15 @@ public sealed class MainViewModel : INotifyPropertyChanged
     private readonly LocalizationService _localizationService;
     private readonly ContextMenuRegistryService _contextMenuRegistryService;
     private readonly CliDetectionService _cliDetectionService;
+    private readonly CliDefinitionService _cliDefinitionService;
     private readonly UpdateService _updateService;
     private readonly System.Timers.Timer _updateTimer;
     private AppSettings _settings;
     private bool _isUpdating;
+    private string _newCliDisplayName = string.Empty;
+    private string _newCliExecutableName = string.Empty;
+    private string _newCliInstallUrl = string.Empty;
+    private string _newCliDocsUrl = string.Empty;
 
     public MainViewModel(
         SettingsService settingsService,
@@ -32,6 +37,7 @@ public sealed class MainViewModel : INotifyPropertyChanged
         _localizationService = localizationService;
         _contextMenuRegistryService = contextMenuRegistryService;
         _cliDetectionService = cliDetectionService;
+        _cliDefinitionService = cliDefinitionService;
         _settings = _settingsService.Load();
         _updateService = new UpdateService();
         _updateTimer = new System.Timers.Timer(TimeSpan.FromHours(24).TotalMilliseconds)
@@ -41,7 +47,7 @@ public sealed class MainViewModel : INotifyPropertyChanged
         _updateTimer.Elapsed += async (_, _) => await BackgroundCheckAsync();
 
         CliItems = new ObservableCollection<CliItemViewModel>(
-            cliDefinitionService.GetAll().Select(cli => new CliItemViewModel
+            _cliDefinitionService.GetAll(_settings).Select(cli => new CliItemViewModel
             {
                 Definition = cli,
                 DetectionResult = _cliDetectionService.Detect(cli),
@@ -50,22 +56,28 @@ public sealed class MainViewModel : INotifyPropertyChanged
 
         ApplyCommand = new RelayCommand(_ => Apply());
         RemoveAllCommand = new RelayCommand(_ => RemoveAll());
+        RepairCommand = new RelayCommand(_ => Repair());
         RefreshCommand = new RelayCommand(_ => RefreshDetectionStatus());
         OpenInstallLinkCommand = new RelayCommand(param => OpenLink(param, isInstallLink: true));
         OpenDocsLinkCommand = new RelayCommand(param => OpenLink(param, isInstallLink: false));
         CheckUpdateCommand = new RelayCommand(_ => _ = ManualCheckForUpdateAsync());
         ResetSkippedUpdateCommand = new RelayCommand(_ => ResetSkippedUpdate());
+        AddCustomCliCommand = new RelayCommand(_ => AddCustomCli());
+        RemoveCustomCliCommand = new RelayCommand(param => RemoveCustomCli(param));
     }
 
     public event PropertyChangedEventHandler? PropertyChanged;
     public ObservableCollection<CliItemViewModel> CliItems { get; }
     public ICommand ApplyCommand { get; }
     public ICommand RemoveAllCommand { get; }
+    public ICommand RepairCommand { get; }
     public ICommand RefreshCommand { get; }
     public ICommand OpenInstallLinkCommand { get; }
     public ICommand OpenDocsLinkCommand { get; }
     public ICommand CheckUpdateCommand { get; }
     public ICommand ResetSkippedUpdateCommand { get; }
+    public ICommand AddCustomCliCommand { get; }
+    public ICommand RemoveCustomCliCommand { get; }
     public string AppTitle => _localizationService.Translate("App.Title", Language);
     public string LanguageLabel => T("Settings.Language");
     public string TerminalLabel => T("Settings.Terminal");
@@ -82,8 +94,10 @@ public sealed class MainViewModel : INotifyPropertyChanged
     public string LanguageEnglishLabel => T("Language.English");
     public string TerminalWindowsTerminalLabel => T("Terminal.WindowsTerminal");
     public string TerminalPowerShellLabel => T("Terminal.PowerShell");
+    public string TerminalPowerShell7Label => T("Terminal.PowerShell7");
     public string RefreshLabel => T("Action.Refresh");
     public string RemoveAllLabel => T("Action.RemoveAll");
+    public string RepairLabel => T("Action.Repair");
     public string ApplyLabel => T("Action.Apply");
     public string CheckUpdateLabel => T("Action.CheckUpdate");
     public string ResetSkippedUpdateLabel => T("Action.ResetSkippedUpdate");
@@ -94,6 +108,13 @@ public sealed class MainViewModel : INotifyPropertyChanged
         : string.Format(T("Update.SkippedVersion"), _settings.SkippedUpdateVersion);
     public string InstallLinkLabel => T("Cli.Action.OpenInstallPage");
     public string DocsLinkLabel => T("Cli.Action.OpenDocsPage");
+    public string RemoveCustomCliLabel => T("Cli.Action.RemoveCustom");
+    public string NewCliSectionLabel => T("CustomCli.Section");
+    public string NewCliDisplayNameLabel => T("CustomCli.DisplayName");
+    public string NewCliExecutableNameLabel => T("CustomCli.ExecutableName");
+    public string NewCliInstallUrlLabel => T("CustomCli.InstallUrl");
+    public string NewCliDocsUrlLabel => T("CustomCli.DocsUrl");
+    public string AddCustomCliLabel => T("CustomCli.Add");
     public string InstalledStatusLabel => T("Cli.Status.Installed");
     public string NotInstalledStatusLabel => T("Cli.Status.NotInstalled");
 
@@ -131,6 +152,50 @@ public sealed class MainViewModel : INotifyPropertyChanged
         }
     }
 
+    public string NewCliDisplayName
+    {
+        get => _newCliDisplayName;
+        set
+        {
+            if (_newCliDisplayName == value) return;
+            _newCliDisplayName = value;
+            OnPropertyChanged();
+        }
+    }
+
+    public string NewCliExecutableName
+    {
+        get => _newCliExecutableName;
+        set
+        {
+            if (_newCliExecutableName == value) return;
+            _newCliExecutableName = value;
+            OnPropertyChanged();
+        }
+    }
+
+    public string NewCliInstallUrl
+    {
+        get => _newCliInstallUrl;
+        set
+        {
+            if (_newCliInstallUrl == value) return;
+            _newCliInstallUrl = value;
+            OnPropertyChanged();
+        }
+    }
+
+    public string NewCliDocsUrl
+    {
+        get => _newCliDocsUrl;
+        set
+        {
+            if (_newCliDocsUrl == value) return;
+            _newCliDocsUrl = value;
+            OnPropertyChanged();
+        }
+    }
+
     public async Task OnAppStartedAsync()
     {
         _updateTimer.Start();
@@ -139,20 +204,40 @@ public sealed class MainViewModel : INotifyPropertyChanged
 
     private void Apply()
     {
+        _settings.EnabledCliIds = CliItems.Where(x => x.IsEnabled).Select(x => x.Id).ToList();
+        _settings.CustomCliDefinitions = CliItems
+            .Where(x => IsCustomCliId(x.Id))
+            .Select(x => new CustomCliDefinition
+            {
+                Id = x.Id,
+                DisplayName = x.DisplayName,
+                ExecutableName = x.ExecutableName,
+                InstallUrl = x.Definition.InstallUrl,
+                DocsUrl = x.Definition.DocsUrl,
+            })
+            .ToList();
+        ApplyContextMenuRegistrations();
+        _settingsService.Save(_settings);
+        MessageBox.Show(_localizationService.Translate("Message.Applied", Language));
+    }
+
+    private void Repair()
+    {
+        ApplyContextMenuRegistrations();
+        _settingsService.Save(_settings);
+        MessageBox.Show(_localizationService.Translate("Message.Repaired", Language));
+    }
+
+    private void ApplyContextMenuRegistrations()
+    {
         string appPath = Environment.ProcessPath ?? throw new InvalidOperationException("Cannot resolve executable path.");
         _contextMenuRegistryService.RemoveAll();
-
-        _settings.EnabledCliIds = CliItems.Where(x => x.IsEnabled).Select(x => x.Id).ToList();
-
         foreach (CliItemViewModel cliItem in CliItems.Where(x => x.IsEnabled))
         {
             string parentMenuLabel = AppTitle;
             string label = _localizationService.Translate("ContextMenu.OpenWith", Language, cliItem.DisplayName);
             _contextMenuRegistryService.RegisterCli(cliItem.Definition, parentMenuLabel, label, appPath);
         }
-
-        _settingsService.Save(_settings);
-        MessageBox.Show(_localizationService.Translate("Message.Applied", Language));
     }
 
     private void RemoveAll()
@@ -175,6 +260,71 @@ public sealed class MainViewModel : INotifyPropertyChanged
             };
         }
     }
+
+    private void AddCustomCli()
+    {
+        if (string.IsNullOrWhiteSpace(NewCliDisplayName) || string.IsNullOrWhiteSpace(NewCliExecutableName))
+        {
+            MessageBox.Show(T("CustomCli.Error.Required"), AppTitle, MessageBoxButton.OK, MessageBoxImage.Information);
+            return;
+        }
+
+        string baseId = Slugify(NewCliDisplayName);
+        string id = EnsureUniqueCustomId(baseId);
+        CliDefinition definition = new()
+        {
+            Id = id,
+            DisplayName = NewCliDisplayName.Trim(),
+            ExecutableName = NewCliExecutableName.Trim(),
+            InstallUrl = string.IsNullOrWhiteSpace(NewCliInstallUrl) ? "https://example.com" : NewCliInstallUrl.Trim(),
+            DocsUrl = string.IsNullOrWhiteSpace(NewCliDocsUrl) ? "https://example.com" : NewCliDocsUrl.Trim(),
+        };
+
+        CliItems.Add(new CliItemViewModel
+        {
+            Definition = definition,
+            DetectionResult = _cliDetectionService.Detect(definition),
+            IsEnabled = true,
+        });
+
+        NewCliDisplayName = string.Empty;
+        NewCliExecutableName = string.Empty;
+        NewCliInstallUrl = string.Empty;
+        NewCliDocsUrl = string.Empty;
+    }
+
+    private void RemoveCustomCli(object? parameter)
+    {
+        if (parameter is not CliItemViewModel item || !IsCustomCliId(item.Id))
+        {
+            return;
+        }
+
+        CliItems.Remove(item);
+    }
+
+    private string EnsureUniqueCustomId(string baseId)
+    {
+        string id = baseId;
+        int suffix = 1;
+        while (CliItems.Any(x => string.Equals(x.Id, id, StringComparison.OrdinalIgnoreCase)))
+        {
+            id = $"{baseId}-{suffix}";
+            suffix++;
+        }
+
+        return id;
+    }
+
+    private static string Slugify(string input)
+    {
+        string slug = new(input.Trim().ToLowerInvariant().Select(ch => char.IsLetterOrDigit(ch) ? ch : '-').ToArray());
+        while (slug.Contains("--", StringComparison.Ordinal)) slug = slug.Replace("--", "-", StringComparison.Ordinal);
+        slug = slug.Trim('-');
+        return string.IsNullOrWhiteSpace(slug) ? $"custom-{Guid.NewGuid():N}"[..12] : $"custom-{slug}";
+    }
+
+    private static bool IsCustomCliId(string id) => id.StartsWith("custom-", StringComparison.OrdinalIgnoreCase);
 
     private async Task ManualCheckForUpdateAsync()
     {
@@ -353,8 +503,10 @@ public sealed class MainViewModel : INotifyPropertyChanged
         OnPropertyChanged(nameof(LanguageEnglishLabel));
         OnPropertyChanged(nameof(TerminalWindowsTerminalLabel));
         OnPropertyChanged(nameof(TerminalPowerShellLabel));
+        OnPropertyChanged(nameof(TerminalPowerShell7Label));
         OnPropertyChanged(nameof(RefreshLabel));
         OnPropertyChanged(nameof(RemoveAllLabel));
+        OnPropertyChanged(nameof(RepairLabel));
         OnPropertyChanged(nameof(ApplyLabel));
         OnPropertyChanged(nameof(CheckUpdateLabel));
         OnPropertyChanged(nameof(ResetSkippedUpdateLabel));
@@ -363,6 +515,13 @@ public sealed class MainViewModel : INotifyPropertyChanged
         OnPropertyChanged(nameof(SkippedUpdateLabel));
         OnPropertyChanged(nameof(InstallLinkLabel));
         OnPropertyChanged(nameof(DocsLinkLabel));
+        OnPropertyChanged(nameof(RemoveCustomCliLabel));
+        OnPropertyChanged(nameof(NewCliSectionLabel));
+        OnPropertyChanged(nameof(NewCliDisplayNameLabel));
+        OnPropertyChanged(nameof(NewCliExecutableNameLabel));
+        OnPropertyChanged(nameof(NewCliInstallUrlLabel));
+        OnPropertyChanged(nameof(NewCliDocsUrlLabel));
+        OnPropertyChanged(nameof(AddCustomCliLabel));
         OnPropertyChanged(nameof(InstalledStatusLabel));
         OnPropertyChanged(nameof(NotInstalledStatusLabel));
     }

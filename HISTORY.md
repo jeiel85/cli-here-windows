@@ -201,3 +201,28 @@
   - dotnet test --configuration Release (12 tests)
 - 결과: 성공
 
+
+- 작업: v0.2 핵심 기능 구현 (커스텀 CLI/PowerShell 7/Repair)
+- 변경 파일:
+  - src/CliHere.App/Models/CustomCliDefinition.cs
+  - src/CliHere.App/Models/AppSettings.cs
+  - src/CliHere.App/Services/CliDefinitionService.cs
+  - src/CliHere.App/Services/LauncherService.cs
+  - src/CliHere.App/Services/TerminalLauncher.cs
+  - src/CliHere.App/ViewModels/CliItemViewModel.cs
+  - src/CliHere.App/ViewModels/MainViewModel.cs
+  - src/CliHere.App/MainWindow.xaml
+  - src/CliHere.App/Resources/Languages/en.json
+  - src/CliHere.App/Resources/Languages/ko.json
+  - src/CliHere.Tests/CliDefinitionServiceTests.cs
+  - src/CliHere.Tests/LauncherServiceTests.cs
+  - src/CliHere.Tests/TerminalLauncherTests.cs
+  - .agent/tasks.md
+  - .agent/progress.md
+  - HISTORY.md
+  - CHANGELOG.md
+- 검증:
+  - dotnet build --configuration Release
+  - dotnet test --configuration Release (15 tests)
+- 결과: 성공
+

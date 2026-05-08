@@ -52,3 +52,7 @@ Initial MVP implementation baseline completed.
 - Auto-update UX pass: added skipped-version label/reset action and concurrent update-check guard
 - Expanded SettingsService tests for skipped update persistence and invalid JSON fallback
 
+- Implemented custom CLI definitions (add/remove) with persistence and launcher integration
+- Added PowerShell 7 terminal mode with pwsh detection fallback
+- Added explicit context menu Repair action and completion message
+

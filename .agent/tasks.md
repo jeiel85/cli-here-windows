@@ -27,13 +27,14 @@
 
 - [x] Localize all UI labels via binding/resource key (remove temporary hard-coded labels)
 - [x] Add parent context menu group
-- [ ] Add custom CLI definitions
-- [ ] Add PowerShell 7 support
-- [ ] Add repair context menu action
+- [x] Add custom CLI definitions
+- [x] Add PowerShell 7 support
+- [x] Add repair context menu action
 - [ ] Research Windows 11 native context menu integration
 
 
 
 
 - [ ] Auto update UX polish (localized progress status in dialog and stronger error/timeout messaging)
+
 

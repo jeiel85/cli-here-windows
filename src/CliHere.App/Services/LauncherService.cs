@@ -27,8 +27,8 @@ public sealed class LauncherService
             throw new ArgumentException("Folder path is invalid.", nameof(folderPath));
         }
 
-        CliDefinition cli = _cliDefinitionService.GetById(cliId) ?? throw new ArgumentException("Unknown CLI ID.", nameof(cliId));
         AppSettings settings = _settingsService.Load();
+        CliDefinition cli = _cliDefinitionService.GetById(cliId, settings) ?? throw new ArgumentException("Unknown CLI ID.", nameof(cliId));
         _terminalLauncher.Launch(settings.Terminal, settings.RunAsAdministrator, folderPath, cli.ExecutableName);
     }
 }

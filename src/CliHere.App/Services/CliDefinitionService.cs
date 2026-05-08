@@ -12,7 +12,32 @@ public sealed class CliDefinitionService
         new() { Id = "codex", DisplayName = "OpenAI Codex CLI", ExecutableName = "codex", InstallUrl = "https://platform.openai.com/docs/codex", DocsUrl = "https://platform.openai.com/docs/codex" },
     ];
 
-    public IReadOnlyList<CliDefinition> GetAll() => BuiltInCliDefinitions;
+    public IReadOnlyList<CliDefinition> GetAll(AppSettings? settings = null)
+    {
+        List<CliDefinition> result = [.. BuiltInCliDefinitions];
+        if (settings is not null)
+        {
+            foreach (CustomCliDefinition custom in settings.CustomCliDefinitions)
+            {
+                if (string.IsNullOrWhiteSpace(custom.Id) ||
+                    string.IsNullOrWhiteSpace(custom.DisplayName) ||
+                    string.IsNullOrWhiteSpace(custom.ExecutableName))
+                {
+                    continue;
+                }
 
-    public CliDefinition? GetById(string cliId) => BuiltInCliDefinitions.FirstOrDefault(cli => string.Equals(cli.Id, cliId, StringComparison.OrdinalIgnoreCase));
+                if (result.Any(x => string.Equals(x.Id, custom.Id, StringComparison.OrdinalIgnoreCase)))
+                {
+                    continue;
+                }
+
+                result.Add(custom.ToCliDefinition());
+            }
+        }
+
+        return result;
+    }
+
+    public CliDefinition? GetById(string cliId, AppSettings? settings = null)
+        => GetAll(settings).FirstOrDefault(cli => string.Equals(cli.Id, cliId, StringComparison.OrdinalIgnoreCase));
 }
