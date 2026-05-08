@@ -238,3 +238,14 @@
   - dotnet test --configuration Release (15 tests)
 - 결과: 성공
 
+
+- 작업: README.md 고급화 리디자인
+- 변경 파일:
+  - README.md
+  - .agent/progress.md
+  - HISTORY.md
+  - CHANGELOG.md
+- 검증:
+  - Markdown 구조/링크 점검
+- 결과: 성공
+

@@ -1,131 +1,126 @@
 # CLI Here
 
-**CLI Here** is a lightweight Windows utility that lets you launch AI coding CLIs directly from File Explorer's right-click menu.
+<p align="center">
+  <b>Launch AI coding CLIs from Windows File Explorer in one click.</b><br/>
+  <sub>English name: <b>CLI Here</b> · Korean name: <b>CLI 여기서 열기</b></sub>
+</p>
 
-Korean name: **CLI 여기서 열기**
-
-> Open Gemini, OpenCode, Claude Code, or OpenAI Codex CLI in the current folder without opening PowerShell and typing `cd` manually.
-
----
-
-## Status
-
-This project has an MVP implementation baseline and is actively being hardened for release.
-
-## Runtime requirement
-
-The default release package uses framework-dependent publish (`self-contained=false`) to reduce size.
-You need the **.NET 9 Desktop Runtime (x64)** installed on the target Windows machine.
+<p align="center">
+  <a href="https://github.com/jeiel85/cli-here/actions/workflows/build.yml"><img alt="Build" src="https://img.shields.io/github/actions/workflow/status/jeiel85/cli-here/build.yml?branch=main&label=build"></a>
+  <a href="https://github.com/jeiel85/cli-here/releases"><img alt="Release" src="https://img.shields.io/github/v/release/jeiel85/cli-here"></a>
+  <a href="https://github.com/jeiel85/cli-here/blob/main/LICENSE"><img alt="License" src="https://img.shields.io/github/license/jeiel85/cli-here"></a>
+  <a href="https://github.com/jeiel85/cli-here/stargazers"><img alt="Stars" src="https://img.shields.io/github/stars/jeiel85/cli-here?style=social"></a>
+</p>
 
 ---
 
-## What it does
+## Why CLI Here?
 
-CLI Here adds optional context menu entries to Windows File Explorer:
+Running AI CLIs usually means:
 
-- Open Gemini here
-- Open OpenCode here
-- Open Claude Code here
-- Open Codex here
+1. Open terminal
+2. `cd` into your folder
+3. Run `gemini`, `codex`, `claude`, etc.
 
-When selected, CLI Here launches the configured terminal in the selected folder and starts the chosen CLI.
+CLI Here removes those steps by adding Explorer context menu actions that open your selected CLI directly in the target folder.
 
 ---
 
-## Supported CLIs
+## Highlights
 
-| CLI | Command | Detection | Install/docs |
+- Context menu integration for both:
+  - Folder right-click
+  - Folder background right-click
+- Built-in CLIs:
+  - Gemini CLI
+  - OpenCode
+  - Claude Code
+  - OpenAI Codex CLI
+- Custom CLI definitions (add/remove)
+- Terminal modes:
+  - Windows Terminal
+  - PowerShell
+  - PowerShell 7 (`pwsh`, fallback-aware)
+- Optional administrator launch (`runas` + UAC)
+- Explorer menu grouping under a single `CLI Here` parent menu
+- One-click registry repair action
+- GitHub Releases-based auto-update baseline
+
+---
+
+## Runtime Requirement
+
+Default release packaging uses **framework-dependent publish** (`self-contained=false`) to keep downloads small.
+
+You need:
+
+- **.NET 9 Desktop Runtime (x64)** on the target Windows machine
+
+---
+
+## Installation (Release)
+
+1. Download latest assets from [Releases](https://github.com/jeiel85/cli-here/releases/latest)
+2. Use:
+   - `CliHere-win-x64.zip` for normal app delivery
+   - `CliHere.exe` + `CliHere.exe.sha256` for update flow verification/debugging
+3. Extract and run `CliHere.exe`
+4. Configure options and click `Apply`
+
+---
+
+## Supported CLI Table
+
+| CLI | Command | Detection | Install / Docs |
 |---|---|---|---|
 | Gemini CLI | `gemini` | PATH | https://google-gemini.github.io/gemini-cli/docs/get-started/ |
 | OpenCode | `opencode` | PATH | https://opencode.ai/docs/cli/ |
 | Claude Code | `claude` | PATH | https://docs.claude.com/en/docs/claude-code/setup |
 | OpenAI Codex CLI | `codex` | PATH | https://help.openai.com/en/articles/11096431-openai-codex-ci-getting-started |
 
-CLI Here does not install these CLIs automatically. It only detects whether they are available from PATH and links to the official install pages.
+CLI Here does **not** auto-install third-party CLIs. It only detects availability and provides official links.
 
 ---
 
-## MVP implementation status
-
-- [x] WPF settings UI
-- [x] Korean and English UI
-- [x] System/Korean/English language mode
-- [x] CLI installation detection from PATH
-- [x] Context menu add/remove
-- [x] Folder background right-click support
-- [x] Folder right-click support
-- [x] PowerShell launch mode
-- [x] Windows Terminal launch mode
-- [x] Optional administrator launch mode
-- [x] JSON settings under `%APPDATA%\\CliHere\\settings.json`
-- [x] GitHub Actions build/test workflow
-- [x] ZIP release asset
-
----
-
-## Administrator mode
-
-CLI Here can optionally launch the selected terminal as administrator.
-
-This does not mean CLI Here needs admin rights for normal setup. Context menu registration is planned to use user-level registry keys under:
-
-```text
-HKCU\Software\Classes
-```
-
-When administrator mode is enabled, Windows will show a UAC prompt when launching a CLI from the context menu.
-
----
-
-## Windows 11 context menu note
-
-The MVP uses standard registry-based File Explorer context menu integration.
-
-On Windows 11, these entries may appear under:
-
-```text
-Show more options
-```
-
-Native top-level Windows 11 context menu integration is a future enhancement.
-
----
-
-## Security principles
+## Security Principles
 
 - No telemetry
-- No analytics
-- No background network requests
-- No automatic CLI installation
-- No project file scanning
+- No analytics SDKs
+- No background network scanning of projects
 - No project file upload
-- User-level registry keys only
-- Only registry keys created by this app are removed
+- Registry scope limited to `HKCU\Software\Classes`
+- Only `CliHere_` owned keys are removed/updated
+
+---
+
+## Windows 11 Note
+
+This MVP uses classic registry-based context menu integration.
+
+On Windows 11, entries may appear under:
+
+- `Show more options`
 
 ---
 
 ## Localization
 
-CLI Here supports:
-
 - English
 - Korean
 
-The root README is English-first for public GitHub and Reddit distribution. Korean documentation is available in `README.ko.md`.
+Korean docs: [README.ko.md](./README.ko.md)
 
 ---
 
 ## Development
 
-Recommended stack:
+### Tech Stack
 
-- C#
-- WPF
-- .NET 9
+- C# / .NET 9 / WPF
 - xUnit
 - GitHub Actions
 
-Common commands:
+### Commands
 
 ```powershell
 dotnet restore
@@ -135,8 +130,17 @@ dotnet test --configuration Release
 
 ---
 
+## Roadmap Snapshot
+
+- [x] MVP foundation + context menu + launcher modes
+- [x] Custom CLI definitions
+- [x] Repair action
+- [x] PowerShell 7 mode
+- [~] Auto-update hardening and rollout validation
+- [ ] Windows 11 native top-level context menu research
+
+---
+
 ## License
 
 MIT
-
-

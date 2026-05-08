@@ -58,3 +58,5 @@ Initial MVP implementation baseline completed.
 
 - Prepared v0.1.1 release rehearsal (version bump + changelog + validation)
 
+- Refreshed GitHub README.md with a top-repo style layout (badges, highlights, install path, roadmap snapshot)
+
