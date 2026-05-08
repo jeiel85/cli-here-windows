@@ -56,3 +56,5 @@ Initial MVP implementation baseline completed.
 - Added PowerShell 7 terminal mode with pwsh detection fallback
 - Added explicit context menu Repair action and completion message
 
+- Prepared v0.1.1 release rehearsal (version bump + changelog + validation)
+

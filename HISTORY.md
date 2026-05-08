@@ -226,3 +226,15 @@
   - dotnet test --configuration Release (15 tests)
 - 결과: 성공
 
+
+- 작업: v0.1.1 자동업데이트 E2E 리허설 릴리즈 준비
+- 변경 파일:
+  - src/CliHere.App/CliHere.App.csproj
+  - CHANGELOG.md
+  - .agent/progress.md
+  - HISTORY.md
+- 검증:
+  - dotnet build --configuration Release
+  - dotnet test --configuration Release (15 tests)
+- 결과: 성공
+

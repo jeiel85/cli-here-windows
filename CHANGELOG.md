@@ -1,5 +1,29 @@
 # Changelog
 
+## v0.1.1 - 2026-05-08
+
+### Added
+
+- Custom CLI definition support (add/remove in settings, persistence, launcher integration).
+- Context menu Repair action for one-click registry rebuild.
+- PowerShell 7 terminal mode option with `pwsh` detection fallback.
+- GitHub Releases-based auto-update baseline with check/download/verify/apply flow.
+
+### Changed
+
+- Grouped Explorer context menu entries under a single `CLI Here` parent submenu.
+- Switched release packaging to framework-dependent mode (`self-contained=false`) for smaller default asset size.
+- Updated release workflow to publish `CliHere.exe` and `CliHere.exe.sha256` updater assets.
+
+### Fixed
+
+- Improved update flow resilience (overlap guard, skipped-version reset, invalid settings JSON fallback).
+
+### Verification
+
+- `dotnet build --configuration Release` passed.
+- `dotnet test --configuration Release` passed (15 tests).
+- Build CI passed on `main` before tag release.
 ## v0.1.0 - 2026-05-08
 
 ### Added`n`n- Added custom CLI definition support (add/remove in settings, persistence, and launcher execution).`n- Added explicit context menu Repair action for one-click registry rebuild.`n- Added PowerShell 7 terminal mode support with pwsh detection fallback.`n`n`n- Started auto-update implementation using GitHub Releases (check/download/verify/apply flow with update dialog).`n- Added update check UI action and startup background update check path.`n
@@ -38,6 +62,7 @@
 - `dotnet publish src/CliHere.App/CliHere.App.csproj --configuration Release --runtime win-x64 --self-contained true -p:PublishSingleFile=true -o dist/CliHere` passed.
 - Local zip `dist/CliHere-win-x64.zip` generated (size > 0).
 - Published exe startup verified locally.
+
 
 
 
