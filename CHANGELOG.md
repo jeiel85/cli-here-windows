@@ -2,16 +2,22 @@
 
 ## v0.1.3 - 2026-05-08
 
+### Added
+
+- Added a modern theme resource dictionary (`Themes/ModernTheme.xaml`) with color tokens and shared control styles.
+
 ### Fixed
 
 - Changed release packaging to multi-file framework-dependent mode (`PublishSingleFile=false`) to avoid large single executable startup delays and packaging ambiguity.
 - Added startup deployment integrity check so incomplete installs (exe-only copy) fail fast with a clear recovery message.
+- Refreskinned the main settings window from default system-look layout to a card-based UI with clearer hierarchy and improved action affordance.
 
 ### Verification
 
 - `dotnet build --configuration Release` passed.
 - `dotnet test --configuration Release` passed.
 - `./scripts/publish.ps1` passed.
+- Release app launch check passed (`CliHere.exe` process alive).
 
 ## v0.1.2 - 2026-05-08
 

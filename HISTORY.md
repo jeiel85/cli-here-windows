@@ -17,6 +17,24 @@
 - 결과: 진행 중
 - 후속 작업: v0.1.3 태그 릴리즈 후 실제 설치 경로 재검증
 
+- 작업: 메인 UI 테마/레이아웃 현대화 1차 적용
+- 변경 파일:
+  - src/CliHere.App/Themes/ModernTheme.xaml
+  - src/CliHere.App/App.xaml
+  - src/CliHere.App/MainWindow.xaml
+  - src/CliHere.App/ViewModels/MainViewModel.cs
+  - src/CliHere.App/Resources/Languages/ko.json
+  - src/CliHere.App/Resources/Languages/en.json
+  - CHANGELOG.md
+  - .agent/progress.md
+  - HISTORY.md
+- 검증:
+  - dotnet build --configuration Release
+  - dotnet test --configuration Release
+  - Release 앱 실행 확인 (프로세스 기동/생존)
+- 결과: 성공
+- 후속 작업: 다크/라이트 테마 전환 토글 및 ListView 상태 배지 커스텀 스타일 보강
+
 ## 2026-05-08
 
 - 작업: CLI Here / CLI 여기서 열기 초기 설계 묶음 작성

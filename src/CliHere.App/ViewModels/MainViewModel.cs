@@ -110,6 +110,7 @@ public sealed class MainViewModel : INotifyPropertyChanged
     public string DocsLinkLabel => T("Cli.Action.OpenDocsPage");
     public string RemoveCustomCliLabel => T("Cli.Action.RemoveCustom");
     public string NewCliSectionLabel => T("CustomCli.Section");
+    public string GeneralSectionLabel => T("Section.General");
     public string NewCliDisplayNameLabel => T("CustomCli.DisplayName");
     public string NewCliExecutableNameLabel => T("CustomCli.ExecutableName");
     public string NewCliInstallUrlLabel => T("CustomCli.InstallUrl");
@@ -517,6 +518,7 @@ public sealed class MainViewModel : INotifyPropertyChanged
         OnPropertyChanged(nameof(DocsLinkLabel));
         OnPropertyChanged(nameof(RemoveCustomCliLabel));
         OnPropertyChanged(nameof(NewCliSectionLabel));
+        OnPropertyChanged(nameof(GeneralSectionLabel));
         OnPropertyChanged(nameof(NewCliDisplayNameLabel));
         OnPropertyChanged(nameof(NewCliExecutableNameLabel));
         OnPropertyChanged(nameof(NewCliInstallUrlLabel));

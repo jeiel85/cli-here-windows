@@ -6,143 +6,166 @@
         xmlns:models="clr-namespace:CliHere.App.Models"
         mc:Ignorable="d"
         Icon="Assets/AppIcon.ico"
-        Title="{Binding AppTitle}" Height="420" Width="720">
-    <Grid Margin="16">
+        Title="{Binding AppTitle}" Height="760" Width="1100" MinHeight="700" MinWidth="980">
+    <Grid Margin="20">
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <StackPanel Orientation="Horizontal" Margin="0,0,0,12">
-            <TextBlock Text="{Binding LanguageLabel}" Width="120" VerticalAlignment="Center"/>
-            <ComboBox Width="220" SelectedValue="{Binding Language}" SelectedValuePath="Tag">
-                <ComboBoxItem Content="{Binding LanguageSystemLabel}" Tag="{x:Static models:LanguageMode.System}"/>
-                <ComboBoxItem Content="{Binding LanguageKoreanLabel}" Tag="{x:Static models:LanguageMode.Korean}"/>
-                <ComboBoxItem Content="{Binding LanguageEnglishLabel}" Tag="{x:Static models:LanguageMode.English}"/>
-            </ComboBox>
-        </StackPanel>
-
-        <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0,0,0,12">
-            <TextBlock Text="{Binding TerminalLabel}" Width="120" VerticalAlignment="Center"/>
-            <ComboBox Width="220" SelectedValue="{Binding Terminal}" SelectedValuePath="Tag">
-                <ComboBoxItem Content="{Binding TerminalWindowsTerminalLabel}" Tag="{x:Static models:TerminalMode.WindowsTerminal}"/>
-                <ComboBoxItem Content="{Binding TerminalPowerShellLabel}" Tag="{x:Static models:TerminalMode.PowerShell}"/>
-                <ComboBoxItem Content="{Binding TerminalPowerShell7Label}" Tag="{x:Static models:TerminalMode.PowerShell7}"/>
-            </ComboBox>
-        </StackPanel>
-
-        <CheckBox Grid.Row="2" IsChecked="{Binding RunAsAdministrator}" Content="{Binding RunAsAdministratorLabel}" Margin="0,0,0,12"/>
-
-        <GroupBox Grid.Row="3" Header="{Binding NewCliSectionLabel}" Margin="0,0,0,12">
-            <Grid Margin="10">
+        <Border Style="{StaticResource CardStyle}" Padding="18">
+            <Grid>
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="110"/>
                     <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="110"/>
                     <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                </Grid.RowDefinitions>
-
-                <TextBlock Grid.Row="0" Grid.Column="0" Text="{Binding NewCliDisplayNameLabel}" VerticalAlignment="Center"/>
-                <TextBox Grid.Row="0" Grid.Column="1" Margin="6,0,10,6" Text="{Binding NewCliDisplayName, UpdateSourceTrigger=PropertyChanged}"/>
-                <TextBlock Grid.Row="0" Grid.Column="2" Text="{Binding NewCliExecutableNameLabel}" VerticalAlignment="Center"/>
-                <TextBox Grid.Row="0" Grid.Column="3" Margin="6,0,10,6" Text="{Binding NewCliExecutableName, UpdateSourceTrigger=PropertyChanged}"/>
-                <Button Grid.Row="0" Grid.Column="4" Content="{Binding AddCustomCliLabel}" Width="90" Margin="0,0,0,6" Command="{Binding AddCustomCliCommand}"/>
-
-                <TextBlock Grid.Row="1" Grid.Column="0" Text="{Binding NewCliInstallUrlLabel}" VerticalAlignment="Center"/>
-                <TextBox Grid.Row="1" Grid.Column="1" Margin="6,0,10,0" Text="{Binding NewCliInstallUrl, UpdateSourceTrigger=PropertyChanged}"/>
-                <TextBlock Grid.Row="1" Grid.Column="2" Text="{Binding NewCliDocsUrlLabel}" VerticalAlignment="Center"/>
-                <TextBox Grid.Row="1" Grid.Column="3" Margin="6,0,10,0" Text="{Binding NewCliDocsUrl, UpdateSourceTrigger=PropertyChanged}"/>
+                <StackPanel Margin="0,0,16,0">
+                    <TextBlock Text="{Binding AppTitle}" FontSize="24" FontWeight="Bold"/>
+                    <TextBlock Margin="0,4,0,0" Foreground="{StaticResource TextSecondaryBrush}" Text="{Binding CurrentVersionLabel}"/>
+                    <TextBlock Margin="0,2,0,0" Foreground="{StaticResource TextSecondaryBrush}" Text="{Binding UpdateCheckLabel}"/>
+                    <TextBlock Margin="0,2,0,0" Foreground="{StaticResource TextSecondaryBrush}" Text="{Binding SkippedUpdateLabel}"/>
+                </StackPanel>
+                <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
+                    <Button Content="{Binding CheckUpdateLabel}" Width="130" Margin="0,0,8,0" Command="{Binding CheckUpdateCommand}"/>
+                    <Button Content="{Binding ResetSkippedUpdateLabel}" Width="145" Command="{Binding ResetSkippedUpdateCommand}"/>
+                </StackPanel>
             </Grid>
-        </GroupBox>
+        </Border>
 
-        <GroupBox Grid.Row="4" Header="{Binding SupportedCliLabel}" Margin="0,0,0,12">
-            <ListView ItemsSource="{Binding CliItems}">
-                <ListView.View>
-                    <GridView>
-                        <GridViewColumn Header="{Binding DataContext.CliColumnIdLabel, RelativeSource={RelativeSource AncestorType=ListView}}" DisplayMemberBinding="{Binding Id}" Width="90"/>
-                        <GridViewColumn Header="{Binding DataContext.CliColumnNameLabel, RelativeSource={RelativeSource AncestorType=ListView}}" DisplayMemberBinding="{Binding DisplayName}" Width="140"/>
-                        <GridViewColumn Header="{Binding DataContext.CliColumnCommandLabel, RelativeSource={RelativeSource AncestorType=ListView}}" DisplayMemberBinding="{Binding ExecutableName}" Width="100"/>
-                        <GridViewColumn Header="{Binding DataContext.CliColumnEnabledLabel, RelativeSource={RelativeSource AncestorType=ListView}}" Width="60">
-                            <GridViewColumn.CellTemplate>
-                                <DataTemplate>
-                                    <CheckBox IsChecked="{Binding IsEnabled, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Center"/>
-                                </DataTemplate>
-                            </GridViewColumn.CellTemplate>
-                        </GridViewColumn>
-                        <GridViewColumn Header="{Binding DataContext.CliColumnStatusLabel, RelativeSource={RelativeSource AncestorType=ListView}}" Width="90">
-                            <GridViewColumn.CellTemplate>
-                                <DataTemplate>
-                                    <TextBlock Text="{Binding DataContext.NotInstalledStatusLabel, RelativeSource={RelativeSource AncestorType=ListView}}">
-                                        <TextBlock.Style>
-                                            <Style TargetType="TextBlock">
-                                                <Style.Triggers>
-                                                    <DataTrigger Binding="{Binding IsInstalled}" Value="True">
-                                                        <Setter Property="Text" Value="{Binding DataContext.InstalledStatusLabel, RelativeSource={RelativeSource AncestorType=ListView}}"/>
-                                                    </DataTrigger>
-                                                </Style.Triggers>
-                                            </Style>
-                                        </TextBlock.Style>
-                                    </TextBlock>
-                                </DataTemplate>
-                            </GridViewColumn.CellTemplate>
-                        </GridViewColumn>
-                        <GridViewColumn Header="{Binding DataContext.CliColumnActionsLabel, RelativeSource={RelativeSource AncestorType=ListView}}" Width="250">
-                            <GridViewColumn.CellTemplate>
-                                <DataTemplate>
-                                    <StackPanel Orientation="Horizontal">
-                                        <Button Margin="0,0,6,0"
-                                                Padding="8,2"
-                                                Content="{Binding DataContext.InstallLinkLabel, RelativeSource={RelativeSource AncestorType=ListView}}"
-                                                Command="{Binding DataContext.OpenInstallLinkCommand, RelativeSource={RelativeSource AncestorType=ListView}}"
-                                                CommandParameter="{Binding}"/>
-                                        <Button Padding="8,2"
-                                                Content="{Binding DataContext.DocsLinkLabel, RelativeSource={RelativeSource AncestorType=ListView}}"
-                                                Command="{Binding DataContext.OpenDocsLinkCommand, RelativeSource={RelativeSource AncestorType=ListView}}"
-                                                CommandParameter="{Binding}"/>
-                                        <Button Margin="6,0,0,0"
-                                                Padding="8,2"
-                                                Content="{Binding DataContext.RemoveCustomCliLabel, RelativeSource={RelativeSource AncestorType=ListView}}"
-                                                Command="{Binding DataContext.RemoveCustomCliCommand, RelativeSource={RelativeSource AncestorType=ListView}}"
-                                                CommandParameter="{Binding}"
-                                                IsEnabled="{Binding IsCustom}"/>
-                                    </StackPanel>
-                                </DataTemplate>
-                            </GridViewColumn.CellTemplate>
-                        </GridViewColumn>
-                    </GridView>
-                </ListView.View>
-            </ListView>
-        </GroupBox>
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+            <StackPanel>
+                <Border Style="{StaticResource CardStyle}">
+                    <StackPanel>
+                        <TextBlock Style="{StaticResource CardTitleTextStyle}" Text="{Binding GeneralSectionLabel}"/>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="140"/>
+                                <ColumnDefinition Width="280"/>
+                                <ColumnDefinition Width="40"/>
+                                <ColumnDefinition Width="140"/>
+                                <ColumnDefinition Width="280"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0" Text="{Binding LanguageLabel}" VerticalAlignment="Center"/>
+                            <ComboBox Grid.Column="1" SelectedValue="{Binding Language}" SelectedValuePath="Tag">
+                                <ComboBoxItem Content="{Binding LanguageSystemLabel}" Tag="{x:Static models:LanguageMode.System}"/>
+                                <ComboBoxItem Content="{Binding LanguageKoreanLabel}" Tag="{x:Static models:LanguageMode.Korean}"/>
+                                <ComboBoxItem Content="{Binding LanguageEnglishLabel}" Tag="{x:Static models:LanguageMode.English}"/>
+                            </ComboBox>
+                            <TextBlock Grid.Column="3" Text="{Binding TerminalLabel}" VerticalAlignment="Center"/>
+                            <ComboBox Grid.Column="4" SelectedValue="{Binding Terminal}" SelectedValuePath="Tag">
+                                <ComboBoxItem Content="{Binding TerminalWindowsTerminalLabel}" Tag="{x:Static models:TerminalMode.WindowsTerminal}"/>
+                                <ComboBoxItem Content="{Binding TerminalPowerShellLabel}" Tag="{x:Static models:TerminalMode.PowerShell}"/>
+                                <ComboBoxItem Content="{Binding TerminalPowerShell7Label}" Tag="{x:Static models:TerminalMode.PowerShell7}"/>
+                            </ComboBox>
+                        </Grid>
+                        <CheckBox Margin="0,12,0,0" IsChecked="{Binding RunAsAdministrator}" Content="{Binding RunAsAdministratorLabel}" />
+                    </StackPanel>
+                </Border>
 
-        <Grid Grid.Row="5">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="Auto"/>
-            </Grid.ColumnDefinitions>
+                <GroupBox>
+                    <Border Style="{StaticResource CardStyle}">
+                        <StackPanel>
+                            <TextBlock Style="{StaticResource CardTitleTextStyle}" Text="{Binding NewCliSectionLabel}"/>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="120"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="120"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
 
-            <StackPanel Orientation="Vertical" VerticalAlignment="Center">
-                <TextBlock Text="{Binding CurrentVersionLabel}" FontSize="12" Opacity="0.8"/>
-                <TextBlock Text="{Binding UpdateCheckLabel}" FontSize="11" Opacity="0.8"/>
-                <TextBlock Text="{Binding SkippedUpdateLabel}" FontSize="11" Opacity="0.8"/>
+                                <TextBlock Grid.Row="0" Grid.Column="0" Text="{Binding NewCliDisplayNameLabel}" VerticalAlignment="Center"/>
+                                <TextBox Grid.Row="0" Grid.Column="1" Margin="8,0,14,8" Text="{Binding NewCliDisplayName, UpdateSourceTrigger=PropertyChanged}"/>
+                                <TextBlock Grid.Row="0" Grid.Column="2" Text="{Binding NewCliExecutableNameLabel}" VerticalAlignment="Center"/>
+                                <TextBox Grid.Row="0" Grid.Column="3" Margin="8,0,14,8" Text="{Binding NewCliExecutableName, UpdateSourceTrigger=PropertyChanged}"/>
+                                <Button Grid.Row="0" Grid.Column="4" Width="95" Margin="0,0,0,8" Content="{Binding AddCustomCliLabel}" Command="{Binding AddCustomCliCommand}"/>
+
+                                <TextBlock Grid.Row="1" Grid.Column="0" Text="{Binding NewCliInstallUrlLabel}" VerticalAlignment="Center"/>
+                                <TextBox Grid.Row="1" Grid.Column="1" Margin="8,0,14,0" Text="{Binding NewCliInstallUrl, UpdateSourceTrigger=PropertyChanged}"/>
+                                <TextBlock Grid.Row="1" Grid.Column="2" Text="{Binding NewCliDocsUrlLabel}" VerticalAlignment="Center"/>
+                                <TextBox Grid.Row="1" Grid.Column="3" Margin="8,0,14,0" Text="{Binding NewCliDocsUrl, UpdateSourceTrigger=PropertyChanged}"/>
+                            </Grid>
+                        </StackPanel>
+                    </Border>
+                </GroupBox>
+
+                <GroupBox>
+                    <Border Style="{StaticResource CardStyle}">
+                        <StackPanel>
+                            <TextBlock Style="{StaticResource CardTitleTextStyle}" Text="{Binding SupportedCliLabel}"/>
+                            <ListView ItemsSource="{Binding CliItems}">
+                                <ListView.View>
+                                    <GridView>
+                                        <GridViewColumn Header="{Binding DataContext.CliColumnIdLabel, RelativeSource={RelativeSource AncestorType=ListView}}" DisplayMemberBinding="{Binding Id}" Width="90"/>
+                                        <GridViewColumn Header="{Binding DataContext.CliColumnNameLabel, RelativeSource={RelativeSource AncestorType=ListView}}" DisplayMemberBinding="{Binding DisplayName}" Width="150"/>
+                                        <GridViewColumn Header="{Binding DataContext.CliColumnCommandLabel, RelativeSource={RelativeSource AncestorType=ListView}}" DisplayMemberBinding="{Binding ExecutableName}" Width="110"/>
+                                        <GridViewColumn Header="{Binding DataContext.CliColumnEnabledLabel, RelativeSource={RelativeSource AncestorType=ListView}}" Width="60">
+                                            <GridViewColumn.CellTemplate>
+                                                <DataTemplate>
+                                                    <CheckBox IsChecked="{Binding IsEnabled, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Center"/>
+                                                </DataTemplate>
+                                            </GridViewColumn.CellTemplate>
+                                        </GridViewColumn>
+                                        <GridViewColumn Header="{Binding DataContext.CliColumnStatusLabel, RelativeSource={RelativeSource AncestorType=ListView}}" Width="90">
+                                            <GridViewColumn.CellTemplate>
+                                                <DataTemplate>
+                                                    <TextBlock Text="{Binding DataContext.NotInstalledStatusLabel, RelativeSource={RelativeSource AncestorType=ListView}}">
+                                                        <TextBlock.Style>
+                                                            <Style TargetType="TextBlock">
+                                                                <Style.Triggers>
+                                                                    <DataTrigger Binding="{Binding IsInstalled}" Value="True">
+                                                                        <Setter Property="Text" Value="{Binding DataContext.InstalledStatusLabel, RelativeSource={RelativeSource AncestorType=ListView}}"/>
+                                                                    </DataTrigger>
+                                                                </Style.Triggers>
+                                                            </Style>
+                                                        </TextBlock.Style>
+                                                    </TextBlock>
+                                                </DataTemplate>
+                                            </GridViewColumn.CellTemplate>
+                                        </GridViewColumn>
+                                        <GridViewColumn Header="{Binding DataContext.CliColumnActionsLabel, RelativeSource={RelativeSource AncestorType=ListView}}" Width="320">
+                                            <GridViewColumn.CellTemplate>
+                                                <DataTemplate>
+                                                    <StackPanel Orientation="Horizontal">
+                                                        <Button Margin="0,0,6,0"
+                                                                Content="{Binding DataContext.InstallLinkLabel, RelativeSource={RelativeSource AncestorType=ListView}}"
+                                                                Command="{Binding DataContext.OpenInstallLinkCommand, RelativeSource={RelativeSource AncestorType=ListView}}"
+                                                                CommandParameter="{Binding}"/>
+                                                        <Button Content="{Binding DataContext.DocsLinkLabel, RelativeSource={RelativeSource AncestorType=ListView}}"
+                                                                Command="{Binding DataContext.OpenDocsLinkCommand, RelativeSource={RelativeSource AncestorType=ListView}}"
+                                                                CommandParameter="{Binding}"/>
+                                                        <Button Margin="6,0,0,0"
+                                                                Style="{StaticResource DangerButtonStyle}"
+                                                                Content="{Binding DataContext.RemoveCustomCliLabel, RelativeSource={RelativeSource AncestorType=ListView}}"
+                                                                Command="{Binding DataContext.RemoveCustomCliCommand, RelativeSource={RelativeSource AncestorType=ListView}}"
+                                                                CommandParameter="{Binding}"
+                                                                IsEnabled="{Binding IsCustom}"/>
+                                                    </StackPanel>
+                                                </DataTemplate>
+                                            </GridViewColumn.CellTemplate>
+                                        </GridViewColumn>
+                                    </GridView>
+                                </ListView.View>
+                            </ListView>
+                        </StackPanel>
+                    </Border>
+                </GroupBox>
             </StackPanel>
+        </ScrollViewer>
 
-            <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right">
-                <Button Content="{Binding CheckUpdateLabel}" Width="120" Margin="0,0,8,0" Command="{Binding CheckUpdateCommand}"/>
-                <Button Content="{Binding ResetSkippedUpdateLabel}" Width="120" Margin="0,0,8,0" Command="{Binding ResetSkippedUpdateCommand}"/>
+        <Border Grid.Row="2" Style="{StaticResource CardStyle}" Margin="0,12,0,0">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
                 <Button Content="{Binding RefreshLabel}" Width="100" Margin="0,0,8,0" Command="{Binding RefreshCommand}"/>
                 <Button Content="{Binding RemoveAllLabel}" Width="120" Margin="0,0,8,0" Command="{Binding RemoveAllCommand}"/>
                 <Button Content="{Binding RepairLabel}" Width="90" Margin="0,0,8,0" Command="{Binding RepairCommand}"/>
                 <Button Content="{Binding ApplyLabel}" Width="100" Command="{Binding ApplyCommand}"/>
             </StackPanel>
-        </Grid>
+        </Border>
     </Grid>
 </Window>

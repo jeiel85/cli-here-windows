@@ -4,6 +4,7 @@
   "Settings.Terminal": "Terminal",
   "Settings.RunAsAdministrator": "Run terminal as administrator",
   "Section.SupportedCli": "Supported CLI",
+  "Section.General": "General",
   "Language.System": "System",
   "Language.Korean": "Korean",
   "Language.English": "English",
