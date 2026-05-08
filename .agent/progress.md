@@ -49,3 +49,6 @@ Initial MVP implementation baseline completed.
 - Started auto-update implementation: GitHub release check, update dialog, skip-version setting, startup background check, and manual check action
 - Release workflow now uploads CliHere.exe and CliHere.exe.sha256 assets for updater consumption
 
+- Auto-update UX pass: added skipped-version label/reset action and concurrent update-check guard
+- Expanded SettingsService tests for skipped update persistence and invalid JSON fallback
+

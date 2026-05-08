@@ -97,13 +97,15 @@
             <StackPanel Orientation="Vertical" VerticalAlignment="Center">
                 <TextBlock Text="{Binding CurrentVersionLabel}" FontSize="12" Opacity="0.8"/>
                 <TextBlock Text="{Binding UpdateCheckLabel}" FontSize="11" Opacity="0.8"/>
+                <TextBlock Text="{Binding SkippedUpdateLabel}" FontSize="11" Opacity="0.8"/>
             </StackPanel>
 
             <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right">
                 <Button Content="{Binding CheckUpdateLabel}" Width="120" Margin="0,0,8,0" Command="{Binding CheckUpdateCommand}"/>
-            <Button Content="{Binding RefreshLabel}" Width="100" Margin="0,0,8,0" Command="{Binding RefreshCommand}"/>
-            <Button Content="{Binding RemoveAllLabel}" Width="120" Margin="0,0,8,0" Command="{Binding RemoveAllCommand}"/>
-            <Button Content="{Binding ApplyLabel}" Width="100" Command="{Binding ApplyCommand}"/>
+                <Button Content="{Binding ResetSkippedUpdateLabel}" Width="120" Margin="0,0,8,0" Command="{Binding ResetSkippedUpdateCommand}"/>
+                <Button Content="{Binding RefreshLabel}" Width="100" Margin="0,0,8,0" Command="{Binding RefreshCommand}"/>
+                <Button Content="{Binding RemoveAllLabel}" Width="120" Margin="0,0,8,0" Command="{Binding RemoveAllCommand}"/>
+                <Button Content="{Binding ApplyLabel}" Width="100" Command="{Binding ApplyCommand}"/>
             </StackPanel>
         </Grid>
     </Grid>

@@ -19,6 +19,7 @@ public sealed class MainViewModel : INotifyPropertyChanged
     private readonly UpdateService _updateService;
     private readonly System.Timers.Timer _updateTimer;
     private AppSettings _settings;
+    private bool _isUpdating;
 
     public MainViewModel(
         SettingsService settingsService,
@@ -53,6 +54,7 @@ public sealed class MainViewModel : INotifyPropertyChanged
         OpenInstallLinkCommand = new RelayCommand(param => OpenLink(param, isInstallLink: true));
         OpenDocsLinkCommand = new RelayCommand(param => OpenLink(param, isInstallLink: false));
         CheckUpdateCommand = new RelayCommand(_ => _ = ManualCheckForUpdateAsync());
+        ResetSkippedUpdateCommand = new RelayCommand(_ => ResetSkippedUpdate());
     }
 
     public event PropertyChangedEventHandler? PropertyChanged;
@@ -63,6 +65,7 @@ public sealed class MainViewModel : INotifyPropertyChanged
     public ICommand OpenInstallLinkCommand { get; }
     public ICommand OpenDocsLinkCommand { get; }
     public ICommand CheckUpdateCommand { get; }
+    public ICommand ResetSkippedUpdateCommand { get; }
     public string AppTitle => _localizationService.Translate("App.Title", Language);
     public string LanguageLabel => T("Settings.Language");
     public string TerminalLabel => T("Settings.Terminal");
@@ -83,8 +86,12 @@ public sealed class MainViewModel : INotifyPropertyChanged
     public string RemoveAllLabel => T("Action.RemoveAll");
     public string ApplyLabel => T("Action.Apply");
     public string CheckUpdateLabel => T("Action.CheckUpdate");
+    public string ResetSkippedUpdateLabel => T("Action.ResetSkippedUpdate");
     public string CurrentVersionLabel => $"{T("Update.CurrentVersionPrefix")} v{UpdateService.CurrentVersion.ToString(3)}";
     public string UpdateCheckLabel { get; private set; } = string.Empty;
+    public string SkippedUpdateLabel => string.IsNullOrWhiteSpace(_settings.SkippedUpdateVersion)
+        ? string.Empty
+        : string.Format(T("Update.SkippedVersion"), _settings.SkippedUpdateVersion);
     public string InstallLinkLabel => T("Cli.Action.OpenInstallPage");
     public string DocsLinkLabel => T("Cli.Action.OpenDocsPage");
     public string InstalledStatusLabel => T("Cli.Status.Installed");
@@ -171,6 +178,11 @@ public sealed class MainViewModel : INotifyPropertyChanged
 
     private async Task ManualCheckForUpdateAsync()
     {
+        if (_isUpdating)
+        {
+            return;
+        }
+
         UpdateCheckLabel = T("Update.Checking");
         OnPropertyChanged(nameof(UpdateCheckLabel));
 
@@ -219,6 +231,11 @@ public sealed class MainViewModel : INotifyPropertyChanged
 
     private async Task BackgroundCheckAsync()
     {
+        if (_isUpdating)
+        {
+            return;
+        }
+
         try
         {
             UpdateService.UpdateInfo? result = await _updateService.CheckForUpdateAsync();
@@ -249,6 +266,7 @@ public sealed class MainViewModel : INotifyPropertyChanged
 
         dialog.OnUpdateRequested += () =>
         {
+            _isUpdating = true;
             _ = Task.Run(async () =>
             {
                 try
@@ -273,6 +291,7 @@ public sealed class MainViewModel : INotifyPropertyChanged
                 }
                 catch (Exception ex)
                 {
+                    _isUpdating = false;
                     dialog.ShowError(ex.Message);
                 }
             });
@@ -288,6 +307,19 @@ public sealed class MainViewModel : INotifyPropertyChanged
     {
         _settings.SkippedUpdateVersion = version;
         _settingsService.Save(_settings);
+        OnPropertyChanged(nameof(SkippedUpdateLabel));
+    }
+
+    private void ResetSkippedUpdate()
+    {
+        if (string.IsNullOrWhiteSpace(_settings.SkippedUpdateVersion))
+        {
+            return;
+        }
+
+        _settings.SkippedUpdateVersion = null;
+        _settingsService.Save(_settings);
+        OnPropertyChanged(nameof(SkippedUpdateLabel));
     }
 
     private void OpenLink(object? parameter, bool isInstallLink)
@@ -325,8 +357,10 @@ public sealed class MainViewModel : INotifyPropertyChanged
         OnPropertyChanged(nameof(RemoveAllLabel));
         OnPropertyChanged(nameof(ApplyLabel));
         OnPropertyChanged(nameof(CheckUpdateLabel));
+        OnPropertyChanged(nameof(ResetSkippedUpdateLabel));
         OnPropertyChanged(nameof(CurrentVersionLabel));
         OnPropertyChanged(nameof(UpdateCheckLabel));
+        OnPropertyChanged(nameof(SkippedUpdateLabel));
         OnPropertyChanged(nameof(InstallLinkLabel));
         OnPropertyChanged(nameof(DocsLinkLabel));
         OnPropertyChanged(nameof(InstalledStatusLabel));

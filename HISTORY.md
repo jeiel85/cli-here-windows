@@ -185,3 +185,19 @@
   - dotnet test --configuration Release
 - 결과: 성공
 
+
+- 작업: 자동업데이트 2차 UX 보강
+- 변경 파일:
+  - src/CliHere.App/ViewModels/MainViewModel.cs
+  - src/CliHere.App/MainWindow.xaml
+  - src/CliHere.App/Resources/Languages/en.json
+  - src/CliHere.App/Resources/Languages/ko.json
+  - src/CliHere.Tests/SettingsServiceTests.cs
+  - .agent/progress.md
+  - HISTORY.md
+  - CHANGELOG.md
+- 검증:
+  - dotnet build --configuration Release
+  - dotnet test --configuration Release (12 tests)
+- 결과: 성공
+
