@@ -274,3 +274,19 @@
   - HTML 구조/링크 점검
 - 결과: 성공
 
+
+- 작업: 실행파일 용량 다이어트
+- 변경 파일:
+  - scripts/publish.ps1
+  - .github/workflows/release.yml
+  - .agent/progress.md
+  - HISTORY.md
+  - CHANGELOG.md
+- 검증:
+  - ./scripts/publish.ps1
+  - dist/CliHere/CliHere.exe: 244,878 bytes
+  - dist/CliHere-win-x64.zip: 111,531 bytes
+  - dotnet build --configuration Release
+  - dotnet test --configuration Release
+- 결과: 성공
+

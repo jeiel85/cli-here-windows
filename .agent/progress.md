@@ -64,3 +64,6 @@ Initial MVP implementation baseline completed.
 
 - Added a GitHub Pages branding landing page at docs/index.html with responsive layout and bilingual navigation
 
+- Fixed oversized publish path by switching scripts/publish.ps1 to framework-dependent single-file mode
+- Added no-symbol publish flags for release/publish script to keep artifacts lean
+
