@@ -144,3 +144,20 @@
   - dotnet test --configuration Release
 - 결과: 성공
 
+
+- 작업: 릴리즈 산출물 용량 최적화 (portable 배포 전환)
+- 변경 파일:
+  - .github/workflows/release.yml
+  - README.md
+  - README.ko.md
+  - .agent/progress.md
+  - HISTORY.md
+  - CHANGELOG.md
+- 검증:
+  - dotnet build --configuration Release
+  - dotnet test --configuration Release
+  - publish/zip 용량 비교
+    - self-contained zip: 58,687,386 bytes
+    - portable zip: 108,033 bytes
+- 결과: 성공
+

@@ -43,3 +43,6 @@ Initial MVP implementation baseline completed.
 
 - Implemented parent context menu grouping so CLI entries appear under a single CLI Here submenu
 
+- Switched release publish mode to portable (self-contained=false) to reduce distribution size
+- Measured local zip size delta: self-contained 58,687,386 bytes vs portable 108,033 bytes
+

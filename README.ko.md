@@ -8,6 +8,11 @@
 
 현재 MVP 구현 베이스가 완료되었고 릴리즈 품질 보강을 진행 중입니다.
 
+## 런타임 요구사항
+
+릴리즈 ZIP 용량을 줄이기 위해 portable 방식(`self-contained=false`)으로 배포합니다.
+대상 Windows PC에는 **.NET 9 Desktop Runtime (x64)** 이 설치되어 있어야 합니다.
+
 ---
 
 ## 무엇을 하나요?

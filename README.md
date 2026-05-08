@@ -12,6 +12,11 @@ Korean name: **CLI 여기서 열기**
 
 This project has an MVP implementation baseline and is actively being hardened for release.
 
+## Runtime requirement
+
+The release ZIP is now published as a portable package (`self-contained=false`) to reduce size.
+You need the **.NET 9 Desktop Runtime (x64)** installed on the target Windows machine.
+
 ---
 
 ## What it does
