@@ -62,3 +62,5 @@ Initial MVP implementation baseline completed.
 
 - Switched root README default language to Korean and added cross-language links (README.md ↔ README.en.md)
 
+- Added a GitHub Pages branding landing page at docs/index.html with responsive layout and bilingual navigation
+

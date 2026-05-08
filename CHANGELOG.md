@@ -2,7 +2,7 @@
 
 ## v0.1.1 - 2026-05-08
 
-### Added
+### Added`n`n- Added a responsive GitHub Pages branding landing page (`docs/index.html`).`n
 
 - Custom CLI definition support (add/remove in settings, persistence, launcher integration).
 - Context menu Repair action for one-click registry rebuild.
@@ -26,7 +26,7 @@
 - Build CI passed on `main` before tag release.
 ## v0.1.0 - 2026-05-08
 
-### Added`n`n- Added custom CLI definition support (add/remove in settings, persistence, and launcher execution).`n- Added explicit context menu Repair action for one-click registry rebuild.`n- Added PowerShell 7 terminal mode support with pwsh detection fallback.`n`n`n- Started auto-update implementation using GitHub Releases (check/download/verify/apply flow with update dialog).`n- Added update check UI action and startup background update check path.`n
+### Added`n`n- Added a responsive GitHub Pages branding landing page (`docs/index.html`).`n`n`n- Added custom CLI definition support (add/remove in settings, persistence, and launcher execution).`n- Added explicit context menu Repair action for one-click registry rebuild.`n- Added PowerShell 7 terminal mode support with pwsh detection fallback.`n`n`n- Started auto-update implementation using GitHub Releases (check/download/verify/apply flow with update dialog).`n- Added update check UI action and startup background update check path.`n
 
 - Initial planning bundle for `CLI Here / CLI 여기서 열기`.
 - Project-specific `AGENTS.md` with automation-first rules.
@@ -62,6 +62,7 @@
 - `dotnet publish src/CliHere.App/CliHere.App.csproj --configuration Release --runtime win-x64 --self-contained true -p:PublishSingleFile=true -o dist/CliHere` passed.
 - Local zip `dist/CliHere-win-x64.zip` generated (size > 0).
 - Published exe startup verified locally.
+
 
 
 

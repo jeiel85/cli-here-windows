@@ -262,3 +262,15 @@
   - Markdown 링크/구조 확인
 - 결과: 성공
 
+
+- 작업: GitHub Pages 브랜딩 페이지 추가
+- 변경 파일:
+  - docs/index.html
+  - README.md
+  - .agent/progress.md
+  - HISTORY.md
+  - CHANGELOG.md
+- 검증:
+  - HTML 구조/링크 점검
+- 결과: 성공
+

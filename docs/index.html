@@ -1,0 +1,318 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>CLI Here / CLI 여기서 열기</title>
+  <meta name="description" content="Launch AI coding CLIs from Windows File Explorer in one click." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0a111b;
+      --bg-soft: #101c2d;
+      --card: #14253b;
+      --text: #e9f1fb;
+      --muted: #9db2cc;
+      --line: #274367;
+      --accent: #2dd4bf;
+      --accent-2: #38bdf8;
+      --warm: #f59e0b;
+      --ok: #34d399;
+      --shadow: 0 22px 70px rgba(0,0,0,.35);
+      --radius-xl: 26px;
+      --radius-md: 14px;
+    }
+
+    * { box-sizing: border-box; }
+    html, body { margin: 0; }
+    body {
+      font-family: "Noto Sans KR", "Space Grotesk", system-ui, sans-serif;
+      background:
+        radial-gradient(1200px 500px at 85% -5%, rgba(56,189,248,.22), transparent 60%),
+        radial-gradient(800px 500px at -10% 0%, rgba(45,212,191,.18), transparent 55%),
+        var(--bg);
+      color: var(--text);
+      line-height: 1.58;
+    }
+
+    .wrap { width: min(1080px, 92vw); margin: 0 auto; }
+
+    .hero {
+      padding: 70px 0 28px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .lang {
+      display: inline-flex;
+      gap: 10px;
+      padding: 7px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: rgba(20,37,59,.55);
+      backdrop-filter: blur(4px);
+      margin-bottom: 22px;
+    }
+
+    .lang a {
+      text-decoration: none;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 600;
+      padding: 8px 12px;
+      border-radius: 999px;
+      transition: all .2s ease;
+    }
+
+    .lang a.active,
+    .lang a:hover {
+      background: linear-gradient(120deg, var(--accent), var(--accent-2));
+      color: #062431;
+    }
+
+    h1 {
+      font-family: "Space Grotesk", "Noto Sans KR", sans-serif;
+      font-size: clamp(2rem, 5vw, 3.7rem);
+      line-height: 1.1;
+      margin: 0;
+      letter-spacing: -.03em;
+    }
+
+    .subtitle {
+      color: var(--muted);
+      font-size: clamp(1rem, 1.8vw, 1.2rem);
+      margin: 16px 0 26px;
+      max-width: 760px;
+    }
+
+    .cta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 28px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 11px 16px;
+      border-radius: 11px;
+      border: 1px solid transparent;
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 14px;
+      transition: transform .15s ease, opacity .15s ease, background .2s ease;
+    }
+
+    .btn:hover { transform: translateY(-1px); }
+
+    .btn-primary {
+      color: #07212a;
+      background: linear-gradient(120deg, var(--accent), var(--accent-2));
+      box-shadow: var(--shadow);
+    }
+
+    .btn-ghost {
+      color: var(--text);
+      border-color: var(--line);
+      background: rgba(20,37,59,.45);
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0,1fr));
+      gap: 10px;
+    }
+
+    .stat {
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: rgba(16,28,45,.78);
+      padding: 11px;
+    }
+
+    .stat b { font-size: 14px; }
+    .stat p { margin: 4px 0 0; color: var(--muted); font-size: 12px; }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1.2fr .8fr;
+      gap: 18px;
+      margin: 18px 0 44px;
+    }
+
+    .card {
+      border: 1px solid var(--line);
+      border-radius: var(--radius-xl);
+      background: linear-gradient(170deg, rgba(20,37,59,.95), rgba(16,28,45,.95));
+      padding: 24px;
+      box-shadow: var(--shadow);
+    }
+
+    .card h2 {
+      margin: 0 0 12px;
+      font-size: clamp(1.15rem, 2vw, 1.45rem);
+      letter-spacing: -.02em;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      color: #063337;
+      font-weight: 700;
+      border-radius: 999px;
+      background: linear-gradient(120deg, #5eead4, #67e8f9);
+      padding: 7px 10px;
+      margin-bottom: 10px;
+    }
+
+    ul.clean {
+      margin: 0;
+      padding-left: 20px;
+      color: var(--muted);
+    }
+
+    ul.clean li { margin: 9px 0; }
+
+    .steps {
+      display: grid;
+      gap: 10px;
+    }
+
+    .step {
+      border: 1px solid var(--line);
+      border-radius: var(--radius-md);
+      background: rgba(10,17,27,.45);
+      padding: 12px;
+    }
+
+    .step b { color: var(--text); }
+    .step p { margin: 5px 0 0; color: var(--muted); font-size: 14px; }
+
+    .chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+
+    .chip {
+      font-size: 12px;
+      border-radius: 999px;
+      padding: 7px 10px;
+      border: 1px solid var(--line);
+      color: var(--muted);
+      background: rgba(20,37,59,.35);
+    }
+
+    .security {
+      margin: 8px 0 44px;
+      border: 1px dashed #2d5b7f;
+      border-radius: var(--radius-xl);
+      padding: 18px;
+      background: rgba(6,18,32,.52);
+    }
+
+    .security h3 { margin: 0 0 8px; }
+
+    footer {
+      padding: 10px 0 42px;
+      color: var(--muted);
+      font-size: 13px;
+      text-align: center;
+    }
+
+    @media (max-width: 900px) {
+      .stats { grid-template-columns: repeat(2, minmax(0,1fr)); }
+      .grid { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 560px) {
+      .hero { padding-top: 48px; }
+      .stats { grid-template-columns: 1fr; }
+      .card { padding: 18px; border-radius: 18px; }
+      .lang { margin-bottom: 14px; }
+    }
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <section class="hero">
+      <div class="lang" aria-label="language switch">
+        <a class="active" href="./index.html">한국어</a>
+        <a href="../README.en.md">English</a>
+      </div>
+
+      <h1>CLI Here / CLI 여기서 열기</h1>
+      <p class="subtitle">
+        터미널 열고 `cd` 입력하는 반복을 줄이고, 탐색기 우클릭 한 번으로 AI 코딩 CLI를 시작하세요.
+      </p>
+
+      <div class="cta">
+        <a class="btn btn-primary" href="https://github.com/jeiel85/cli-here/releases/latest">최신 릴리즈 받기</a>
+        <a class="btn btn-ghost" href="https://github.com/jeiel85/cli-here">GitHub 저장소</a>
+        <a class="btn btn-ghost" href="../README.md">문서 보기</a>
+      </div>
+
+      <div class="stats">
+        <div class="stat"><b>Windows Explorer 통합</b><p>폴더 + 빈 공간 우클릭 지원</p></div>
+        <div class="stat"><b>다국어 UI</b><p>한국어 / English</p></div>
+        <div class="stat"><b>업데이트 베이스라인</b><p>GitHub Releases 기반</p></div>
+        <div class="stat"><b>가벼운 배포</b><p>framework-dependent 기본</p></div>
+      </div>
+    </section>
+
+    <section class="grid">
+      <article class="card">
+        <span class="badge">핵심 가치</span>
+        <h2>폴더 문맥에서 바로 CLI 실행</h2>
+        <ul class="clean">
+          <li>Gemini / OpenCode / Claude / Codex 기본 지원</li>
+          <li>사용자 정의 CLI 추가/삭제</li>
+          <li>Windows Terminal / PowerShell / PowerShell 7 지원</li>
+          <li>선택적 관리자 권한(UAC) 실행</li>
+          <li>컨텍스트 메뉴 복구(Repair) 기능</li>
+        </ul>
+      </article>
+
+      <article class="card">
+        <span class="badge">빠른 시작</span>
+        <h2>3-Step Setup</h2>
+        <div class="steps">
+          <div class="step"><b>1. 다운로드</b><p>`CliHere-win-x64.zip`을 받아 압축 해제</p></div>
+          <div class="step"><b>2. 실행</b><p>`CliHere.exe` 실행 후 옵션 설정</p></div>
+          <div class="step"><b>3. 적용</b><p>`Apply` 클릭 후 탐색기 우클릭에서 사용</p></div>
+        </div>
+      </article>
+    </section>
+
+    <section class="card" style="margin-bottom:16px;">
+      <span class="badge">지원 CLI</span>
+      <h2>Built-in Commands</h2>
+      <div class="chips">
+        <span class="chip">gemini</span>
+        <span class="chip">opencode</span>
+        <span class="chip">claude</span>
+        <span class="chip">codex</span>
+      </div>
+      <p style="color:var(--muted); margin-top:12px;">
+        CLI Here는 서드파티 CLI를 자동 설치하지 않습니다. PATH 감지와 공식 문서 링크 제공에 집중합니다.
+      </p>
+    </section>
+
+    <section class="security">
+      <h3>Security & Privacy by Default</h3>
+      <ul class="clean">
+        <li>텔레메트리/분석 SDK 없음</li>
+        <li>프로젝트 파일 업로드/백그라운드 스캔 없음</li>
+        <li>`HKCU\Software\Classes` 범위만 사용</li>
+        <li>`CliHere_` 소유 레지스트리 키만 정리/수정</li>
+      </ul>
+    </section>
+  </main>
+
+  <footer>
+    CLI Here / CLI 여기서 열기 · MIT License · <a href="https://github.com/jeiel85/cli-here" style="color:#9fdcff;">GitHub</a>
+  </footer>
+</body>
+</html>
