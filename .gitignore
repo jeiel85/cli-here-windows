@@ -1,0 +1,21 @@
+# Build outputs
+bin/
+obj/
+dist/
+artifacts/
+
+# User files
+*.user
+*.suo
+.vs/
+
+# Logs
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Local settings
+.env
+*.local.json

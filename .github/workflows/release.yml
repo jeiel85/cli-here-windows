@@ -1,0 +1,39 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+
+jobs:
+  release:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Publish
+        run: dotnet publish src/CliHere.App/CliHere.App.csproj --configuration Release --runtime win-x64 --self-contained true -p:PublishSingleFile=true -o dist/CliHere
+
+      - name: Zip
+        shell: pwsh
+        run: Compress-Archive -Path dist/CliHere/* -DestinationPath dist/CliHere-win-x64.zip
+
+      - name: Verify asset
+        shell: pwsh
+        run: |
+          if (!(Test-Path dist/CliHere-win-x64.zip)) { throw "Missing release asset" }
+          $item = Get-Item dist/CliHere-win-x64.zip
+          if ($item.Length -le 0) { throw "Release asset is empty" }
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: CliHere-win-x64
+          path: dist/CliHere-win-x64.zip
