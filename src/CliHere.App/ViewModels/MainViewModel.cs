@@ -6,6 +6,7 @@ using System.Windows;
 using System.Windows.Input;
 using CliHere.App.Models;
 using CliHere.App.Services;
+using CliHere.App.Views;
 
 namespace CliHere.App.ViewModels;
 
@@ -15,6 +16,8 @@ public sealed class MainViewModel : INotifyPropertyChanged
     private readonly LocalizationService _localizationService;
     private readonly ContextMenuRegistryService _contextMenuRegistryService;
     private readonly CliDetectionService _cliDetectionService;
+    private readonly UpdateService _updateService;
+    private readonly System.Timers.Timer _updateTimer;
     private AppSettings _settings;
 
     public MainViewModel(
@@ -29,6 +32,12 @@ public sealed class MainViewModel : INotifyPropertyChanged
         _contextMenuRegistryService = contextMenuRegistryService;
         _cliDetectionService = cliDetectionService;
         _settings = _settingsService.Load();
+        _updateService = new UpdateService();
+        _updateTimer = new System.Timers.Timer(TimeSpan.FromHours(24).TotalMilliseconds)
+        {
+            AutoReset = true,
+        };
+        _updateTimer.Elapsed += async (_, _) => await BackgroundCheckAsync();
 
         CliItems = new ObservableCollection<CliItemViewModel>(
             cliDefinitionService.GetAll().Select(cli => new CliItemViewModel
@@ -43,6 +52,7 @@ public sealed class MainViewModel : INotifyPropertyChanged
         RefreshCommand = new RelayCommand(_ => RefreshDetectionStatus());
         OpenInstallLinkCommand = new RelayCommand(param => OpenLink(param, isInstallLink: true));
         OpenDocsLinkCommand = new RelayCommand(param => OpenLink(param, isInstallLink: false));
+        CheckUpdateCommand = new RelayCommand(_ => _ = ManualCheckForUpdateAsync());
     }
 
     public event PropertyChangedEventHandler? PropertyChanged;
@@ -52,6 +62,7 @@ public sealed class MainViewModel : INotifyPropertyChanged
     public ICommand RefreshCommand { get; }
     public ICommand OpenInstallLinkCommand { get; }
     public ICommand OpenDocsLinkCommand { get; }
+    public ICommand CheckUpdateCommand { get; }
     public string AppTitle => _localizationService.Translate("App.Title", Language);
     public string LanguageLabel => T("Settings.Language");
     public string TerminalLabel => T("Settings.Terminal");
@@ -71,6 +82,9 @@ public sealed class MainViewModel : INotifyPropertyChanged
     public string RefreshLabel => T("Action.Refresh");
     public string RemoveAllLabel => T("Action.RemoveAll");
     public string ApplyLabel => T("Action.Apply");
+    public string CheckUpdateLabel => T("Action.CheckUpdate");
+    public string CurrentVersionLabel => $"{T("Update.CurrentVersionPrefix")} v{UpdateService.CurrentVersion.ToString(3)}";
+    public string UpdateCheckLabel { get; private set; } = string.Empty;
     public string InstallLinkLabel => T("Cli.Action.OpenInstallPage");
     public string DocsLinkLabel => T("Cli.Action.OpenDocsPage");
     public string InstalledStatusLabel => T("Cli.Status.Installed");
@@ -110,6 +124,12 @@ public sealed class MainViewModel : INotifyPropertyChanged
         }
     }
 
+    public async Task OnAppStartedAsync()
+    {
+        _updateTimer.Start();
+        await BackgroundCheckAsync();
+    }
+
     private void Apply()
     {
         string appPath = Environment.ProcessPath ?? throw new InvalidOperationException("Cannot resolve executable path.");
@@ -138,13 +158,136 @@ public sealed class MainViewModel : INotifyPropertyChanged
     {
         for (int i = 0; i < CliItems.Count; i++)
         {
+            bool isEnabled = CliItems[i].IsEnabled;
             CliDefinition definition = CliItems[i].Definition;
             CliItems[i] = new CliItemViewModel
             {
                 Definition = definition,
                 DetectionResult = _cliDetectionService.Detect(definition),
+                IsEnabled = isEnabled,
             };
         }
+    }
+
+    private async Task ManualCheckForUpdateAsync()
+    {
+        UpdateCheckLabel = T("Update.Checking");
+        OnPropertyChanged(nameof(UpdateCheckLabel));
+
+        UpdateService.UpdateInfo? result;
+        try
+        {
+            result = await _updateService.CheckForUpdateAsync();
+        }
+        catch (UpdateCheckException ex)
+        {
+            await Application.Current.Dispatcher.InvokeAsync(() =>
+            {
+                string message = ex.Kind switch
+                {
+                    UpdateCheckErrorKind.Network => T("Update.Error.Network"),
+                    UpdateCheckErrorKind.Timeout => T("Update.Error.Timeout"),
+                    UpdateCheckErrorKind.RateLimit => string.Format(T("Update.Error.RateLimit"), ex.RetryAtLocal ?? "?"),
+                    UpdateCheckErrorKind.ApiError => string.Format(T("Update.Error.Api"), ex.StatusCode ?? 0),
+                    _ => T("Update.Error.Unknown"),
+                };
+                MessageBox.Show(message, T("Update.DialogTitle"), MessageBoxButton.OK, MessageBoxImage.Information);
+            });
+
+            UpdateCheckLabel = string.Empty;
+            OnPropertyChanged(nameof(UpdateCheckLabel));
+            return;
+        }
+        catch
+        {
+            UpdateCheckLabel = string.Empty;
+            OnPropertyChanged(nameof(UpdateCheckLabel));
+            return;
+        }
+
+        if (result is null)
+        {
+            UpdateCheckLabel = string.Format(T("Update.UpToDate"), UpdateService.CurrentVersion.ToString(3));
+            OnPropertyChanged(nameof(UpdateCheckLabel));
+            return;
+        }
+
+        UpdateCheckLabel = string.Empty;
+        OnPropertyChanged(nameof(UpdateCheckLabel));
+        await Application.Current.Dispatcher.InvokeAsync(() => OfferUpdate(result));
+    }
+
+    private async Task BackgroundCheckAsync()
+    {
+        try
+        {
+            UpdateService.UpdateInfo? result = await _updateService.CheckForUpdateAsync();
+            if (result is null) return;
+            await Application.Current.Dispatcher.InvokeAsync(() => OfferUpdate(result));
+        }
+        catch
+        {
+            // Background update check should fail silently.
+        }
+    }
+
+    private void OfferUpdate(UpdateService.UpdateInfo info)
+    {
+        string version = info.Version.ToString(3);
+        if (IsVersionSkipped(version))
+        {
+            return;
+        }
+
+        UpdateDialog dialog = new(
+            info.ReleaseNotes,
+            onSkip: () => SkipVersion(version),
+            title: T("Update.DialogTitle"),
+            skipLabel: T("Update.Skip"),
+            updateLabel: T("Update.UpdateNow"),
+            errorTitle: T("Update.ErrorTitle"));
+
+        dialog.OnUpdateRequested += () =>
+        {
+            _ = Task.Run(async () =>
+            {
+                try
+                {
+                    string preparedPath = await _updateService.DownloadAndPrepareUpdateAsync(
+                        info.DownloadUrl,
+                        info.Sha256Url,
+                        (pc, status) =>
+                        {
+                            string localizedStatus = status switch
+                            {
+                                "Downloading..." => T("Update.Status.Downloading"),
+                                "Verifying..." => T("Update.Status.Verifying"),
+                                _ => status,
+                            };
+                            dialog.UpdateProgress(pc, localizedStatus);
+                        });
+
+                    dialog.UpdateProgress(100, T("Update.Restarting"));
+                    await Task.Delay(500);
+                    _updateService.ApplyPreparedUpdate(preparedPath);
+                }
+                catch (Exception ex)
+                {
+                    dialog.ShowError(ex.Message);
+                }
+            });
+        };
+
+        dialog.Show();
+    }
+
+    private bool IsVersionSkipped(string version)
+        => string.Equals(_settings.SkippedUpdateVersion, version, StringComparison.OrdinalIgnoreCase);
+
+    private void SkipVersion(string version)
+    {
+        _settings.SkippedUpdateVersion = version;
+        _settingsService.Save(_settings);
     }
 
     private void OpenLink(object? parameter, bool isInstallLink)
@@ -181,6 +324,9 @@ public sealed class MainViewModel : INotifyPropertyChanged
         OnPropertyChanged(nameof(RefreshLabel));
         OnPropertyChanged(nameof(RemoveAllLabel));
         OnPropertyChanged(nameof(ApplyLabel));
+        OnPropertyChanged(nameof(CheckUpdateLabel));
+        OnPropertyChanged(nameof(CurrentVersionLabel));
+        OnPropertyChanged(nameof(UpdateCheckLabel));
         OnPropertyChanged(nameof(InstallLinkLabel));
         OnPropertyChanged(nameof(DocsLinkLabel));
         OnPropertyChanged(nameof(InstalledStatusLabel));

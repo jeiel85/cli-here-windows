@@ -10,7 +10,7 @@
 
 ## 런타임 요구사항
 
-릴리즈 ZIP 용량을 줄이기 위해 portable 방식(`self-contained=false`)으로 배포합니다.
+릴리즈 ZIP 용량을 줄이기 위해 기본 배포를 framework-dependent(`self-contained=false`) 방식으로 제공합니다.
 대상 Windows PC에는 **.NET 9 Desktop Runtime (x64)** 이 설치되어 있어야 합니다.
 
 ---

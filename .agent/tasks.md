@@ -34,3 +34,6 @@
 
 
 
+
+- [ ] Auto update UX polish (localized progress status in dialog and stronger error/timeout messaging)
+

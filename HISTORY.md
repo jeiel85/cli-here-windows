@@ -161,3 +161,27 @@
     - portable zip: 108,033 bytes
 - 결과: 성공
 
+
+- 작업: 자동업데이트 1차 통합 시작
+- 변경 파일:
+  - src/CliHere.App/Services/UpdateService.cs
+  - src/CliHere.App/Views/UpdateDialog.xaml
+  - src/CliHere.App/Views/UpdateDialog.xaml.cs
+  - src/CliHere.App/ViewModels/MainViewModel.cs
+  - src/CliHere.App/MainWindow.xaml
+  - src/CliHere.App/MainWindow.xaml.cs
+  - src/CliHere.App/Models/AppSettings.cs
+  - src/CliHere.App/Resources/Languages/en.json
+  - src/CliHere.App/Resources/Languages/ko.json
+  - .github/workflows/release.yml
+  - README.md
+  - README.ko.md
+  - .agent/progress.md
+  - .agent/tasks.md
+  - HISTORY.md
+  - CHANGELOG.md
+- 검증:
+  - dotnet build --configuration Release
+  - dotnet test --configuration Release
+- 결과: 성공
+

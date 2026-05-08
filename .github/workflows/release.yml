@@ -24,6 +24,12 @@ jobs:
       - name: Publish
         run: dotnet publish src/CliHere.App/CliHere.App.csproj --configuration Release --runtime win-x64 --self-contained false -p:PublishSingleFile=true -o dist/CliHere
 
+      - name: Generate SHA256
+        shell: pwsh
+        run: |
+          $hash = (Get-FileHash -Algorithm SHA256 dist/CliHere/CliHere.exe).Hash.ToLower()
+          "$hash  CliHere.exe" | Out-File -FilePath dist/CliHere/CliHere.exe.sha256 -Encoding ascii
+
       - name: Zip
         shell: pwsh
         run: Compress-Archive -Path dist/CliHere/* -DestinationPath dist/CliHere-win-x64.zip
@@ -44,5 +50,8 @@ jobs:
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          files: dist/CliHere-win-x64.zip
+          files: |
+            dist/CliHere-win-x64.zip
+            dist/CliHere/CliHere.exe
+            dist/CliHere/CliHere.exe.sha256
           generate_release_notes: true

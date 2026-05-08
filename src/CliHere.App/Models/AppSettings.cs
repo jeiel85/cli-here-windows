@@ -19,4 +19,5 @@ public sealed class AppSettings
     public TerminalMode Terminal { get; set; } = TerminalMode.WindowsTerminal;
     public bool RunAsAdministrator { get; set; }
     public List<string> EnabledCliIds { get; set; } = [];
+    public string? SkippedUpdateVersion { get; set; }
 }

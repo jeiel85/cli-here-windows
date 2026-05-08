@@ -46,3 +46,6 @@ Initial MVP implementation baseline completed.
 - Switched release publish mode to portable (self-contained=false) to reduce distribution size
 - Measured local zip size delta: self-contained 58,687,386 bytes vs portable 108,033 bytes
 
+- Started auto-update implementation: GitHub release check, update dialog, skip-version setting, startup background check, and manual check action
+- Release workflow now uploads CliHere.exe and CliHere.exe.sha256 assets for updater consumption
+

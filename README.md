@@ -14,7 +14,7 @@ This project has an MVP implementation baseline and is actively being hardened f
 
 ## Runtime requirement
 
-The release ZIP is now published as a portable package (`self-contained=false`) to reduce size.
+The default release package uses framework-dependent publish (`self-contained=false`) to reduce size.
 You need the **.NET 9 Desktop Runtime (x64)** installed on the target Windows machine.
 
 ---
