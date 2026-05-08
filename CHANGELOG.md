@@ -1,5 +1,18 @@
 # Changelog
 
+## v0.1.3 - 2026-05-08
+
+### Fixed
+
+- Changed release packaging to multi-file framework-dependent mode (`PublishSingleFile=false`) to avoid large single executable startup delays and packaging ambiguity.
+- Added startup deployment integrity check so incomplete installs (exe-only copy) fail fast with a clear recovery message.
+
+### Verification
+
+- `dotnet build --configuration Release` passed.
+- `dotnet test --configuration Release` passed.
+- `./scripts/publish.ps1` passed.
+
 ## v0.1.2 - 2026-05-08
 
 ### Changed

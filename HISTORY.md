@@ -2,6 +2,23 @@
 
 ## 2026-05-08
 
+- 작업: 로컬 실행 불가/지연 이슈 원인 분석 및 배포 방식 수정
+- 변경 파일:
+  - .github/workflows/release.yml
+  - scripts/publish.ps1
+  - src/CliHere.App/App.xaml.cs
+  - CHANGELOG.md
+  - .agent/progress.md
+  - HISTORY.md
+- 검증:
+  - dotnet build --configuration Release
+  - dotnet test --configuration Release
+  - ./scripts/publish.ps1
+- 결과: 진행 중
+- 후속 작업: v0.1.3 태그 릴리즈 후 실제 설치 경로 재검증
+
+## 2026-05-08
+
 - 작업: CLI Here / CLI 여기서 열기 초기 설계 묶음 작성
 - 변경 파일:
   - AGENTS.md: 최신 범용 에이전트 지침과 CLI Here 프로젝트 전용 규칙 통합

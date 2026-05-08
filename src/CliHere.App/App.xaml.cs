@@ -8,6 +8,12 @@ public partial class App : Application
 {
     protected override void OnStartup(StartupEventArgs e)
     {
+        if (!ValidateDeployment())
+        {
+            Shutdown(1);
+            return;
+        }
+
         base.OnStartup(e);
 
         if (e.Args.Length >= 3 && string.Equals(e.Args[0], "run", StringComparison.OrdinalIgnoreCase))
@@ -43,5 +49,37 @@ public partial class App : Application
             MessageBox.Show(ex.Message, "CLI Here", MessageBoxButton.OK, MessageBoxImage.Error);
             return 1;
         }
+    }
+
+    private static bool ValidateDeployment()
+    {
+        string baseDir = AppContext.BaseDirectory;
+        string[] requiredFiles =
+        [
+            "CliHere.dll",
+            "Resources\\Languages\\en.json",
+            "Resources\\Languages\\ko.json",
+        ];
+
+        foreach (string relativePath in requiredFiles)
+        {
+            string fullPath = Path.Combine(baseDir, relativePath);
+            if (File.Exists(fullPath))
+            {
+                continue;
+            }
+
+            MessageBox.Show(
+                "Installation looks incomplete. Please extract the full ZIP package before running.\n\n"
+                + $"Missing file: {relativePath}\n\n"
+                + "설치 파일이 불완전합니다. ZIP 전체를 압축 해제한 뒤 실행해 주세요.\n"
+                + $"누락 파일: {relativePath}",
+                "CLI Here",
+                MessageBoxButton.OK,
+                MessageBoxImage.Error);
+            return false;
+        }
+
+        return true;
     }
 }

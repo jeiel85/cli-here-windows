@@ -69,3 +69,6 @@ Initial MVP implementation baseline completed.
 
 - Prepared v0.1.2 re-release after artifact size optimization fixes
 
+- Diagnosed local launch issue on `D:\Util\cli-here`: older exe-only install path caused WPF/native dependency failure in 0.1.1 logs, and single-file release mode increased startup delay perception.
+- Switched publish/release to multi-file framework-dependent output (`PublishSingleFile=false`) and added startup deployment integrity guard with actionable error messaging.
+

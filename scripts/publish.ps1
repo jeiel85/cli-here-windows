@@ -6,7 +6,7 @@ dotnet publish src/CliHere.App/CliHere.App.csproj `
     --configuration $Configuration `
     --runtime win-x64 `
     --self-contained false `
-    -p:PublishSingleFile=true `
+    -p:PublishSingleFile=false `
     -p:DebugType=None `
     -p:DebugSymbols=false `
     -o dist/CliHere
