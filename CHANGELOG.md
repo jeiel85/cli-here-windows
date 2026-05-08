@@ -13,6 +13,8 @@
 - Added startup deployment integrity check so incomplete installs (exe-only copy) fail fast with a clear recovery message.
 - Refreskinned the main settings window from default system-look layout to a card-based UI with clearer hierarchy and improved action affordance.
 - Refined control hierarchy in dark mode with secondary/danger button variants and dark list/header/input styling.
+- Replaced system window chrome with a borderless rounded window (custom title bar, drop shadow, maximize-aware corner handling) to match the reference app's visual language end-to-end.
+- Re-templated all interactive controls (ComboBox dropdown popup, ScrollBar thumb, TextBox focus border, ListView/GridView header) so no light-themed defaults remain.
 
 ### Verification
 
