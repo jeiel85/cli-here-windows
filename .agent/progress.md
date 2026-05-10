@@ -4,6 +4,15 @@
 
 Initial MVP implementation baseline completed.
 
+## 2026-05-10
+
+- Fixed PowerShell launch for npm-installed CLIs such as Codex by resolving extensionless commands to `.cmd` shims before PowerShell can pick `.ps1` scripts blocked by execution policy.
+- Fixed terminal availability detection so `IsCommandAvailable("pwsh.exe")` checks the requested file name instead of always checking `wt.exe`.
+- Disabled xUnit test parallelization because several service tests intentionally mutate the process `PATH` environment variable.
+- Verification:
+  - `dotnet test --configuration Release` passed (21 tests)
+  - PowerShell command parsing check for `& '<path>.cmd'` completed
+
 ## Completed
 
 - Created `CliHere.sln` with WPF app (`src/CliHere.App`) and xUnit tests (`src/CliHere.Tests`)

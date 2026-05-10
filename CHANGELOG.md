@@ -1,5 +1,18 @@
 # Changelog
 
+## Unreleased - 2026-05-10
+
+### Fixed
+
+- Fixed Codex and other npm-installed CLI launches in PowerShell by preferring `.cmd` shims over `.ps1` scripts, avoiding PowerShell execution policy failures.
+- Fixed terminal availability detection so PowerShell 7 fallback checks the requested executable name correctly.
+
+### Verification
+
+- `dotnet build --configuration Release` passed.
+- `dotnet test --configuration Release` passed (21 tests).
+- PowerShell command parsing was checked with a `.cmd` shim path.
+
 ## v0.1.3 - 2026-05-08
 
 ### Added
@@ -100,7 +113,6 @@
 - `dotnet publish src/CliHere.App/CliHere.App.csproj --configuration Release --runtime win-x64 --self-contained true -p:PublishSingleFile=true -o dist/CliHere` passed.
 - Local zip `dist/CliHere-win-x64.zip` generated (size > 0).
 - Published exe startup verified locally.
-
 
 
 

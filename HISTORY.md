@@ -1,5 +1,23 @@
 # History
 
+## 2026-05-10
+
+- 작업: Codex 실행 시 PowerShell 실행 정책으로 `codex.ps1`이 차단되는 문제 수정
+- 변경 파일:
+  - src/CliHere.App/Services/TerminalLauncher.cs
+  - src/CliHere.Tests/TerminalLauncherTests.cs
+  - src/CliHere.Tests/AssemblyInfo.cs
+  - .agent/progress.md
+  - .agent/decisions.md
+  - HISTORY.md
+  - CHANGELOG.md
+- 검증:
+  - dotnet build --configuration Release
+  - dotnet test --configuration Release (21 tests)
+  - PowerShell command parsing check with `.cmd` shim path
+- 결과: 성공
+- 후속 작업: 실제 설치본에서 "Codex 여기서 열기" 메뉴 재등록 후 실행 확인
+
 ## 2026-05-08
 
 - 작업: 로컬 실행 불가/지연 이슈 원인 분석 및 배포 방식 수정

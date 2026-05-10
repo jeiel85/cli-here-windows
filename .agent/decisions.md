@@ -47,3 +47,9 @@ Reason: Public users need an actual downloadable Windows artifact, not only sour
 Decision: `CliHere.exe` handles both settings UI and launcher mode (`run`) through startup argument parsing.
 
 Reason: This matches architecture spec while keeping deployment and registry command composition simple.
+
+## 0009. Prefer executable shims over PowerShell scripts for CLI launch
+
+Decision: When launching an extensionless CLI command through PowerShell, resolve PATH entries to `.cmd`, `.exe`, `.bat`, or `.com` before passing the command to PowerShell.
+
+Reason: npm-installed CLIs often create both `.cmd` and `.ps1` shims. If PowerShell resolves `codex` to `codex.ps1`, the user's execution policy can block launch. Calling the `.cmd` shim avoids changing user security policy and keeps CLI Here's launch behavior predictable.
