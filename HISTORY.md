@@ -2,6 +2,19 @@
 
 ## 2026-05-10
 
+- 작업: v0.2.1 패치 릴리즈 준비
+- 변경 파일:
+  - src/CliHere.App/CliHere.App.csproj
+  - CHANGELOG.md
+  - HISTORY.md
+- 검증:
+  - dotnet build --configuration Release
+  - dotnet test --configuration Release (21 tests)
+  - ./scripts/publish.ps1
+  - dist/CliHere-win-x64.zip 생성 및 크기 확인 (123,853 bytes)
+- 결과: 성공
+- 후속 작업: v0.2.1 태그 푸시 후 GitHub Actions 릴리즈 결과 확인
+
 - 작업: Codex 실행 시 PowerShell 실행 정책으로 `codex.ps1`이 차단되는 문제 수정
 - 변경 파일:
   - src/CliHere.App/Services/TerminalLauncher.cs

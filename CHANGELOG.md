@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased - 2026-05-10
+## v0.2.1 - 2026-05-10
 
 ### Fixed
 
@@ -113,7 +113,6 @@
 - `dotnet publish src/CliHere.App/CliHere.App.csproj --configuration Release --runtime win-x64 --self-contained true -p:PublishSingleFile=true -o dist/CliHere` passed.
 - Local zip `dist/CliHere-win-x64.zip` generated (size > 0).
 - Published exe startup verified locally.
-
 
 
 
