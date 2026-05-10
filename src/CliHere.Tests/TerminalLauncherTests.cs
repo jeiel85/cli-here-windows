@@ -39,7 +39,7 @@ public sealed class TerminalLauncherTests
         Assert.Equal("powershell.exe", psi.FileName);
         Assert.True(psi.UseShellExecute);
         Assert.Equal("runas", psi.Verb);
-        Assert.Contains("-NoExit -Command \"codex\"", psi.Arguments, StringComparison.Ordinal);
+        Assert.Contains("-ExecutionPolicy Bypass -NoExit -Command \"codex\"", psi.Arguments, StringComparison.Ordinal);
     }
 
     [Fact]
@@ -54,7 +54,7 @@ public sealed class TerminalLauncherTests
             command: "codex");
 
         Assert.True(psi.FileName is "pwsh.exe" or "powershell.exe");
-        Assert.Contains("-NoExit -Command \"codex\"", psi.Arguments, StringComparison.Ordinal);
+        Assert.Contains("-ExecutionPolicy Bypass -NoExit -Command \"codex\"", psi.Arguments, StringComparison.Ordinal);
     }
 
     [Fact]
@@ -90,7 +90,7 @@ public sealed class TerminalLauncherTests
             workingDirectory: "C:\\Work Folder",
             command: "codex");
 
-        Assert.Contains($"-NoExit -Command \"& '{cmdPath}'\"", psi.Arguments, StringComparison.Ordinal);
+        Assert.Contains($"-ExecutionPolicy Bypass -NoExit -Command \"& '{cmdPath}'\"", psi.Arguments, StringComparison.Ordinal);
     }
 
     [Fact]

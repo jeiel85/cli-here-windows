@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using System.IO.Compression;
 using System.Net.Http;
 using System.Reflection;
 using System.Security.Cryptography;
@@ -39,14 +40,14 @@ public sealed class UpdateCheckException : Exception
 public sealed class UpdateService
 {
     private const string Repo = "jeiel85/cli-here";
-    private const string AssetExeName = "CliHere.exe";
+    private const string AssetZipName = "CliHere-win-x64.zip";
     private const string ProcessName = "CliHere";
     private const string UserAgent = "CliHere-Updater";
 
     private const string ApiListUrl = $"https://api.github.com/repos/{Repo}/releases?per_page=30";
     public const string ReleasePage = $"https://github.com/{Repo}/releases/latest";
 
-    private static readonly HttpClient Http = new() { Timeout = TimeSpan.FromSeconds(15) };
+    private static readonly HttpClient Http = new() { Timeout = TimeSpan.FromSeconds(60) };
 
     public record UpdateInfo(Version Version, string DownloadUrl, string Sha256Url, string ReleaseNotes);
 
@@ -133,23 +134,23 @@ public sealed class UpdateService
             notesBuilder.Append(body);
         }
 
-        string? exeUrl = null;
+        string? zipUrl = null;
         string? shaUrl = null;
         foreach (JsonElement asset in latest.element.GetProperty("assets").EnumerateArray())
         {
             string name = asset.GetProperty("name").GetString() ?? "";
             string url = asset.GetProperty("browser_download_url").GetString() ?? "";
-            if (name.Equals(AssetExeName, StringComparison.OrdinalIgnoreCase)) exeUrl = url;
-            if (name.EndsWith(".sha256", StringComparison.OrdinalIgnoreCase) || name.Equals("SHA256.txt", StringComparison.OrdinalIgnoreCase)) shaUrl = url;
+            if (name.Equals(AssetZipName, StringComparison.OrdinalIgnoreCase)) zipUrl = url;
+            if (name.Equals($"{AssetZipName}.sha256", StringComparison.OrdinalIgnoreCase)) shaUrl = url;
         }
 
-        if (exeUrl is null) return null;
-        return new UpdateInfo(latest.version, exeUrl, shaUrl ?? "", notesBuilder.ToString().TrimEnd());
+        if (zipUrl is null) return null;
+        return new UpdateInfo(latest.version, zipUrl, shaUrl ?? "", notesBuilder.ToString().TrimEnd());
     }
 
     public async Task<string> DownloadAndPrepareUpdateAsync(string downloadUrl, string sha256Url, Action<int, string> onProgress)
     {
-        string tempExe = Path.Combine(Path.GetTempPath(), $"{ProcessName}_new_{Guid.NewGuid():N}.exe");
+        string tempZip = Path.Combine(Path.GetTempPath(), $"{ProcessName}_new_{Guid.NewGuid():N}.zip");
         onProgress(0, "Downloading...");
 
         using (HttpResponseMessage response = await Http.GetAsync(downloadUrl, HttpCompletionOption.ResponseHeadersRead))
@@ -158,7 +159,7 @@ public sealed class UpdateService
             long totalBytes = response.Content.Headers.ContentLength ?? 0;
 
             using Stream contentStream = await response.Content.ReadAsStreamAsync();
-            await using FileStream fileStream = new(tempExe, FileMode.Create, FileAccess.Write, FileShare.None, 8192, true);
+            await using FileStream fileStream = new(tempZip, FileMode.Create, FileAccess.Write, FileShare.None, 8192, true);
 
             byte[] buffer = new byte[8192];
             long totalRead = 0;
@@ -182,11 +183,11 @@ public sealed class UpdateService
             {
                 string expectedRaw = await Http.GetStringAsync(sha256Url);
                 string expected = expectedRaw.Split(' ')[0].Trim().ToLowerInvariant();
-                await using FileStream fs = File.OpenRead(tempExe);
+                await using FileStream fs = File.OpenRead(tempZip);
                 string actual = Convert.ToHexString(SHA256.HashData(fs)).ToLowerInvariant();
                 if (!string.IsNullOrWhiteSpace(expected) && expected != actual)
                 {
-                    File.Delete(tempExe);
+                    File.Delete(tempZip);
                     throw new InvalidOperationException("SHA256 mismatch");
                 }
             }
@@ -196,14 +197,21 @@ public sealed class UpdateService
             }
         }
 
-        return tempExe;
+        string extractDir = Path.Combine(Path.GetTempPath(), $"{ProcessName}_extract_{Guid.NewGuid():N}");
+        Directory.CreateDirectory(extractDir);
+        ZipFile.ExtractToDirectory(tempZip, extractDir, overwriteFiles: true);
+        try { File.Delete(tempZip); } catch { /* best-effort */ }
+
+        return extractDir;
     }
 
-    public void ApplyPreparedUpdate(string preparedExePath)
+    public void ApplyPreparedUpdate(string preparedExtractDir)
     {
         string currentExe = Process.GetCurrentProcess().MainModule?.FileName
             ?? Environment.ProcessPath
-            ?? Path.Combine(AppContext.BaseDirectory, AssetExeName);
+            ?? Path.Combine(AppContext.BaseDirectory, $"{ProcessName}.exe");
+        string installDir = Path.GetDirectoryName(currentExe)
+            ?? throw new InvalidOperationException("Cannot resolve install directory.");
 
         static string Esc(string? value) => (value ?? "").Replace("'", "''", StringComparison.Ordinal);
 
@@ -213,16 +221,24 @@ public sealed class UpdateService
         string command = @"
 $ErrorActionPreference = 'Stop'
 $log = '{LOG_PATH}'
-$oldExe = '{OLD_EXE}'
-$newExe = '{NEW_EXE}'
+$installDir = '{INSTALL_DIR}'
+$extractDir = '{EXTRACT_DIR}'
+$exeName = '{EXE_NAME}'
 $procName = '{PROC_NAME}'
+$ps1Self = '{PS1_PATH}'
 
 function Log($msg) {
-    ""$(Get-Date -Format 'HH:mm:ss') - $msg"" | Out-File -LiteralPath $log -Append
+    try {
+        ""$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') - $msg"" | Out-File -LiteralPath $log -Append -Encoding utf8
+    } catch {}
 }
 
 try {
-    Log ""Waiting for process to exit...""
+    Log ""=== Update started ===""
+    Log ""installDir=$installDir""
+    Log ""extractDir=$extractDir""
+
+    Log ""Waiting for $procName to exit (up to 20s)...""
     $timeout = 20
     while ($timeout -gt 0) {
         $p = Get-Process -Name $procName -ErrorAction SilentlyContinue
@@ -233,36 +249,61 @@ try {
 
     $p = Get-Process -Name $procName -ErrorAction SilentlyContinue
     if ($p) {
+        Log ""Process still running, force-killing $($p.Count) instance(s)""
         Stop-Process -Name $procName -Force -ErrorAction SilentlyContinue
         Start-Sleep -Seconds 2
     }
+    Log ""Process exited""
+
+    if (-not (Test-Path -LiteralPath $extractDir)) { throw ""Extract dir not found: $extractDir"" }
+    if (-not (Test-Path -LiteralPath $installDir)) { throw ""Install dir not found: $installDir"" }
+
+    $files = Get-ChildItem -LiteralPath $extractDir -Recurse -File
+    Log ""Copying $($files.Count) file(s) into install dir""
 
     $retry = 5
-    $success = $false
+    $copied = $false
     while ($retry -gt 0) {
         try {
-            if (Test-Path -LiteralPath $oldExe) {
-                Remove-Item -LiteralPath $oldExe -Force -ErrorAction Stop
+            foreach ($f in $files) {
+                $rel = $f.FullName.Substring($extractDir.Length).TrimStart('\','/')
+                $dest = Join-Path $installDir $rel
+                $destDir = Split-Path $dest -Parent
+                if ($destDir -and -not (Test-Path -LiteralPath $destDir)) {
+                    New-Item -ItemType Directory -Path $destDir -Force | Out-Null
+                }
+                Copy-Item -LiteralPath $f.FullName -Destination $dest -Force -ErrorAction Stop
             }
-            Move-Item -LiteralPath $newExe -Destination $oldExe -Force -ErrorAction Stop
-            $success = $true
+            $copied = $true
             break
         } catch {
+            Log ""Copy attempt failed: $($_.Exception.Message)""
             $retry--
             Start-Sleep -Seconds 2
         }
     }
 
-    if (-not $success) { throw ""Failed to replace executable after retries."" }
-    Start-Process -FilePath $oldExe
+    if (-not $copied) { throw ""Failed to copy update files after retries."" }
+    Log ""Files copied successfully""
+
+    $exePath = Join-Path $installDir $exeName
+    Log ""Starting $exePath""
+    Start-Process -FilePath $exePath
+    Log ""=== Update completed ===""
+}
+catch {
+    Log ""ERROR: $($_.Exception.Message)""
+    Log $_.ScriptStackTrace
 }
 finally {
-    Remove-Item -LiteralPath '{PS1_PATH}' -Force -ErrorAction SilentlyContinue
+    try { Remove-Item -LiteralPath $extractDir -Recurse -Force -ErrorAction SilentlyContinue } catch {}
+    try { Remove-Item -LiteralPath $ps1Self -Force -ErrorAction SilentlyContinue } catch {}
 }
 "
         .Replace("{LOG_PATH}", Esc(logPath), StringComparison.Ordinal)
-        .Replace("{OLD_EXE}", Esc(currentExe), StringComparison.Ordinal)
-        .Replace("{NEW_EXE}", Esc(preparedExePath), StringComparison.Ordinal)
+        .Replace("{INSTALL_DIR}", Esc(installDir), StringComparison.Ordinal)
+        .Replace("{EXTRACT_DIR}", Esc(preparedExtractDir), StringComparison.Ordinal)
+        .Replace("{EXE_NAME}", Esc($"{ProcessName}.exe"), StringComparison.Ordinal)
         .Replace("{PROC_NAME}", Esc(ProcessName), StringComparison.Ordinal)
         .Replace("{PS1_PATH}", Esc(ps1Path), StringComparison.Ordinal);
 

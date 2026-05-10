@@ -28,9 +28,12 @@ public sealed class TerminalLauncher : ITerminalLauncher
         string shellExecutable = usePowerShell7 ? "pwsh.exe" : "powershell.exe";
         string fileName = useWindowsTerminal ? "wt.exe" : shellExecutable;
         string powerShellCommand = ResolvePowerShellCommand(command);
+        // -ExecutionPolicy Bypass scope: the spawned interactive session, so subsequent bare
+        // commands the user types (e.g. `opencode`, `claude`) which PowerShell resolves to
+        // npm-generated .ps1 shims still run despite a Restricted system policy.
         string arguments = useWindowsTerminal
-            ? $"-d {Quote(workingDirectory)} {shellExecutable} -NoExit -Command {Quote(powerShellCommand)}"
-            : $"-NoExit -Command {Quote(powerShellCommand)}";
+            ? $"-d {Quote(workingDirectory)} {shellExecutable} -ExecutionPolicy Bypass -NoExit -Command {Quote(powerShellCommand)}"
+            : $"-ExecutionPolicy Bypass -NoExit -Command {Quote(powerShellCommand)}";
 
         return new ProcessStartInfo
         {

@@ -34,12 +34,34 @@ jobs:
         shell: pwsh
         run: Compress-Archive -Path dist/CliHere/* -DestinationPath dist/CliHere-win-x64.zip
 
+      - name: Generate zip SHA256
+        shell: pwsh
+        run: |
+          $hash = (Get-FileHash -Algorithm SHA256 dist/CliHere-win-x64.zip).Hash.ToLower()
+          "$hash  CliHere-win-x64.zip" | Out-File -FilePath dist/CliHere-win-x64.zip.sha256 -Encoding ascii
+
       - name: Verify asset
         shell: pwsh
         run: |
           if (!(Test-Path dist/CliHere-win-x64.zip)) { throw "Missing release asset" }
           $item = Get-Item dist/CliHere-win-x64.zip
           if ($item.Length -le 0) { throw "Release asset is empty" }
+
+      - name: Extract release notes from CHANGELOG
+        shell: pwsh
+        run: |
+          $tag = "${{ github.ref_name }}"
+          $changelog = Get-Content CHANGELOG.md -Raw
+          $pattern = "(?ms)^## $([regex]::Escape($tag))\b.*?(?=^## v|\z)"
+          $match = [regex]::Match($changelog, $pattern)
+          if ($match.Success) {
+            $body = $match.Value.Trim()
+            Write-Host "Extracted CHANGELOG section for $tag ($($body.Length) chars)"
+          } else {
+            Write-Host "::warning::No CHANGELOG section found for $tag, using fallback"
+            $body = "## $tag`n`nSee https://github.com/jeiel85/cli-here/blob/main/CHANGELOG.md for details."
+          }
+          $body | Out-File -FilePath release_body.md -Encoding utf8
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
@@ -50,8 +72,9 @@ jobs:
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
+          body_path: release_body.md
           files: |
             dist/CliHere-win-x64.zip
+            dist/CliHere-win-x64.zip.sha256
             dist/CliHere/CliHere.exe
             dist/CliHere/CliHere.exe.sha256
-          generate_release_notes: true

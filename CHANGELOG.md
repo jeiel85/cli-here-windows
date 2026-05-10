@@ -1,5 +1,24 @@
 # Changelog
 
+## v0.2.2 - 2026-05-10
+
+### Fixed
+
+- Fixed auto-update so the popup no longer keeps reappearing after applying an update. Previously only `CliHere.exe` (apphost) was replaced while `CliHere.dll` (where the assembly version lives) stayed at the old version, so `Assembly.GetName().Version` never advanced. The updater now downloads `CliHere-win-x64.zip`, extracts it to a temp directory, and copies the entire payload over the install directory.
+- Improved updater PowerShell logging so failures (file locked, permission denied, missing extract dir) are written to `%TEMP%\CliHere_update_debug.log` with timestamps and stack traces instead of failing silently.
+- Restyled the update dialog Skip/Update buttons to use the dark theme's `SecondaryButtonStyle` and the default accent button instead of relying on inline overrides that left the Skip button rendered with the platform default chrome.
+- Fixed PowerShell launches for npm-installed CLIs (`opencode`, `claude`, `codex`, `gemini`) by passing `-ExecutionPolicy Bypass` to the spawned shell so subsequent bare commands the user types in the session aren't blocked by `Restricted` policy when they resolve to `.ps1` shims.
+
+### Changed
+
+- Release workflow now extracts the matching `## v<tag>` section from `CHANGELOG.md` and uses it as the GitHub Release body instead of relying on `generate_release_notes: true`, which produced only a "Full Changelog: ..." line for direct-to-main tag pushes.
+- Release workflow now publishes a `CliHere-win-x64.zip.sha256` checksum alongside the zip for updater verification.
+
+### Verification
+
+- `dotnet build --configuration Release` passed.
+- `dotnet test --configuration Release` passed.
+
 ## v0.2.1 - 2026-05-10
 
 ### Fixed

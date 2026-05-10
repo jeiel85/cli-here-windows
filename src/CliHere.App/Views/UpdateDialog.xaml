@@ -81,10 +81,16 @@
                                 <ColumnDefinition Width="Auto"/>
                             </Grid.ColumnDefinitions>
 
-                            <Button Grid.Column="1" x:Name="SkipBtn" Margin="0,0,10,0" Cursor="Hand" Click="Skip_Click"/>
-                            <Button Grid.Column="2" x:Name="UpdateBtn" Padding="20,8"
-                                    Background="{StaticResource AccentBrush}" Foreground="White"
-                                    FontWeight="Bold" Cursor="Hand" Click="Update_Click"/>
+                            <Button Grid.Column="1"
+                                    x:Name="SkipBtn"
+                                    Style="{StaticResource SecondaryButtonStyle}"
+                                    Margin="0,0,10,0"
+                                    Padding="16,7"
+                                    Click="Skip_Click"/>
+                            <Button Grid.Column="2"
+                                    x:Name="UpdateBtn"
+                                    Padding="20,7"
+                                    Click="Update_Click"/>
                         </Grid>
 
                         <Grid x:Name="ProgressPanel" Visibility="Collapsed">

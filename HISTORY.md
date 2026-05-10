@@ -2,6 +2,26 @@
 
 ## 2026-05-10
 
+- 작업: v0.2.2 패치 — 자동 업데이트 정상화 / 업데이트 다이얼로그 디자인 정리 / 릴리즈 노트 자동 추출 / PowerShell 실행 정책 우회
+- 변경 파일:
+  - src/CliHere.App/CliHere.App.csproj (버전 0.2.2)
+  - src/CliHere.App/Services/UpdateService.cs (zip 기반 전체 디렉토리 교체로 전환, PS 스크립트 try/catch+로깅 강화)
+  - src/CliHere.App/Services/TerminalLauncher.cs (`-ExecutionPolicy Bypass` 인자 추가)
+  - src/CliHere.App/Views/UpdateDialog.xaml (Skip → SecondaryButtonStyle, Update → 디폴트 accent 버튼 사용)
+  - src/CliHere.Tests/TerminalLauncherTests.cs (새 인자 패턴 반영)
+  - .github/workflows/release.yml (CHANGELOG 섹션 추출 → body_path, zip sha256 추가 업로드)
+  - CHANGELOG.md
+  - HISTORY.md
+- 검증:
+  - dotnet build --configuration Release
+  - dotnet test --configuration Release (21/21 통과)
+  - dotnet publish 결과 dll/exe 모두 v0.2.2 확인
+  - dist/CliHere-win-x64.zip 생성 및 압축 해제 → CliHere.dll v0.2.2 확인
+  - CHANGELOG 섹션 추출 정규식 로컬 검증 (v0.2.2 섹션 정확히 캡처)
+- 원인 분석 (자동 업데이트 무한 팝업): D:\Util\cli-here\CliHere.exe = v0.2.0 / CliHere.dll = v0.1.2 — 업데이터가 .exe 단일 파일만 다운로드해 apphost만 교체되고 진짜 어셈블리(CliHere.dll)는 그대로라 `Assembly.GetName().Version`이 항상 구버전. zip 전체 페이로드를 교체하도록 변경.
+- 결과: 성공
+- 후속 작업: v0.2.2 태그 푸시 후 GitHub Actions 릴리즈 결과 확인 / 사용자 측에서 업데이트 한 번 더 시도 시 dll까지 0.2.2로 갱신되는지 확인
+
 - 작업: v0.2.1 패치 릴리즈 준비
 - 변경 파일:
   - src/CliHere.App/CliHere.App.csproj
