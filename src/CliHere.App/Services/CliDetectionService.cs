@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using CliHere.App.Models;
 using Microsoft.Win32;
 
@@ -8,12 +9,98 @@ public sealed class CliDetectionService
     public CliDetectionResult Detect(CliDefinition definition)
     {
         string? resolvedPath = ResolveExecutablePath(definition.ExecutableName);
+        string? version = null;
+        
+        if (!string.IsNullOrWhiteSpace(resolvedPath))
+        {
+            version = DetectVersion(resolvedPath);
+        }
+
         return new CliDetectionResult
         {
             CliId = definition.Id,
             IsInstalled = !string.IsNullOrWhiteSpace(resolvedPath),
             ResolvedPath = resolvedPath,
+            Version = version,
         };
+    }
+
+    private static string? DetectVersion(string executablePath)
+    {
+        try
+        {
+            string? directory = Path.GetDirectoryName(executablePath);
+            if (string.IsNullOrWhiteSpace(directory)) return null;
+
+            string[] versionFiles = ["--version", "-v", "-V", "version"];
+            string[] extensions = ["", ".cmd", ".bat", ".exe"];
+
+            foreach (string versionArg in versionFiles)
+            {
+                foreach (string extension in extensions)
+                {
+                    string candidate = Path.Combine(directory, Path.GetFileNameWithoutExtension(executablePath) + extension);
+                    if (!File.Exists(candidate)) continue;
+
+                    try
+                    {
+                        ProcessStartInfo psi = new()
+                        {
+                            FileName = candidate,
+                            Arguments = versionArg,
+                            RedirectStandardOutput = true,
+                            RedirectStandardError = true,
+                            UseShellExecute = false,
+                            CreateNoWindow = true,
+                            WorkingDirectory = directory,
+                        };
+
+                        using Process process = Process.Start(psi);
+                        if (process is null) continue;
+
+                        string output = process.StandardOutput.ReadToEnd();
+                        process.WaitForExit(2000);
+
+                        if (!string.IsNullOrWhiteSpace(output))
+                        {
+                            string version = ParseVersionFromOutput(output);
+                            if (!string.IsNullOrWhiteSpace(version))
+                            {
+                                return version;
+                            }
+                        }
+                    }
+                    catch
+                    {
+                        // Version detection is best-effort
+                    }
+                }
+            }
+        }
+        catch
+        {
+            // Version detection is best-effort
+        }
+
+        return null;
+    }
+
+    private static string ParseVersionFromOutput(string output)
+    {
+        string[] lines = output.Split(['\n', '\r'], StringSplitOptions.RemoveEmptyEntries);
+        foreach (string line in lines)
+        {
+            string trimmed = line.Trim();
+            if (string.IsNullOrWhiteSpace(trimmed)) continue;
+
+            var match = System.Text.RegularExpressions.Regex.Match(trimmed, @"(\d+\.\d+(?:\.\d+)*)");
+            if (match.Success)
+            {
+                return match.Groups[1].Value;
+            }
+        }
+
+        return string.Empty;
     }
 
     private static string? ResolveExecutablePath(string executableName)

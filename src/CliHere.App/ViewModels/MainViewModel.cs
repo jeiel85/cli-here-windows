@@ -64,6 +64,10 @@ public sealed class MainViewModel : INotifyPropertyChanged
         ResetSkippedUpdateCommand = new RelayCommand(_ => ResetSkippedUpdate());
         AddCustomCliCommand = new RelayCommand(_ => AddCustomCli());
         RemoveCustomCliCommand = new RelayCommand(param => RemoveCustomCli(param));
+        SaveProfileCommand = new RelayCommand(_ => SaveProfile());
+        LoadProfileCommand = new RelayCommand(param => LoadProfile(param));
+        DeleteProfileCommand = new RelayCommand(param => DeleteProfile(param));
+        RefreshProfilesCommand = new RelayCommand(_ => RefreshProfiles());
     }
 
     public event PropertyChangedEventHandler? PropertyChanged;
@@ -78,6 +82,10 @@ public sealed class MainViewModel : INotifyPropertyChanged
     public ICommand ResetSkippedUpdateCommand { get; }
     public ICommand AddCustomCliCommand { get; }
     public ICommand RemoveCustomCliCommand { get; }
+    public ICommand SaveProfileCommand { get; }
+    public ICommand LoadProfileCommand { get; }
+    public ICommand DeleteProfileCommand { get; }
+    public ICommand RefreshProfilesCommand { get; }
     public string AppTitle => _localizationService.Translate("App.Title", Language);
     public string LanguageLabel => T("Settings.Language");
     public string TerminalLabel => T("Settings.Terminal");
@@ -122,6 +130,22 @@ public sealed class MainViewModel : INotifyPropertyChanged
     public string NotInstalledStatusLabel => T("Cli.Status.NotInstalled");
     public bool IsPortable => _settingsService.IsPortable;
     public string PortableLabel => _settingsService.IsPortable ? "(Portable)" : string.Empty;
+    
+    public ObservableCollection<CliProfile> Profiles { get; } = new();
+    public CliProfile? SelectedProfile { get; set; }
+    public string ProfileSectionLabel => T("Profile.Section");
+    public string ProfileNameLabel => T("Profile.Name");
+    public string ProfileCliLabel => T("Profile.Cli");
+    public string ProfileWorkingDirLabel => T("Profile.WorkingDirectory");
+    public string ProfileTerminalLabel => T("Profile.Terminal");
+    public string ProfileAdminLabel => T("Profile.Admin");
+    public string ProfileSaveLabel => T("Profile.Save");
+    public string ProfileLoadLabel => T("Profile.Load");
+    public string ProfileDeleteLabel => T("Profile.Delete");
+    public string ProfileCreateLabel => T("Profile.Create");
+    public string ProfileLastUsedLabel => T("Profile.LastUsed");
+    public string ProfileUseCountLabel => T("Profile.UseCount");
+    public string NewProfileName { get; set; } = string.Empty;
 
     public LocalizationService LocalizationService => _localizationService;
 
@@ -550,6 +574,72 @@ public sealed class MainViewModel : INotifyPropertyChanged
         Process.Start(new ProcessStartInfo(url) { UseShellExecute = true });
     }
 
+    private void SaveProfile()
+    {
+        if (string.IsNullOrWhiteSpace(NewProfileName))
+        {
+            return;
+        }
+
+        ProfileService profileService = new(_settingsService);
+        profileService.Create(
+            name: NewProfileName,
+            cliId: CliItems.FirstOrDefault(x => x.IsEnabled)?.Id ?? "claude",
+            workingDirectory: null,
+            terminalMode: Terminal,
+            runAsAdministrator: RunAsAdministrator);
+
+        NewProfileName = string.Empty;
+        RefreshProfiles();
+    }
+
+    private void LoadProfile(object? parameter)
+    {
+        if (parameter is not CliProfile profile)
+        {
+            return;
+        }
+
+        ProfileService profileService = new(_settingsService);
+        profileService.RecordUsage(profile.Id);
+
+        if (profile.TerminalMode.HasValue)
+        {
+            Terminal = profile.TerminalMode.Value;
+        }
+
+        if (profile.RunAsAdministrator.HasValue)
+        {
+            RunAsAdministrator = profile.RunAsAdministrator.Value;
+        }
+
+        profileService.SetLastSelectedProfileId(profile.Id);
+        RefreshProfiles();
+    }
+
+    private void DeleteProfile(object? parameter)
+    {
+        if (parameter is not CliProfile profile)
+        {
+            return;
+        }
+
+        ProfileService profileService = new(_settingsService);
+        profileService.Delete(profile.Id);
+        RefreshProfiles();
+    }
+
+    private void RefreshProfiles()
+    {
+        ProfileService profileService = new(_settingsService);
+        Profiles.Clear();
+        foreach (CliProfile profile in profileService.GetAll())
+        {
+            Profiles.Add(profile);
+        }
+        OnPropertyChanged(nameof(Profiles));
+    }
+
     private string T(string key) => _localizationService.Translate(key, Language);
 
     private void NotifyLocalizedPropertiesChanged()
@@ -594,6 +684,18 @@ public sealed class MainViewModel : INotifyPropertyChanged
         OnPropertyChanged(nameof(AddCustomCliLabel));
         OnPropertyChanged(nameof(InstalledStatusLabel));
         OnPropertyChanged(nameof(NotInstalledStatusLabel));
+        OnPropertyChanged(nameof(ProfileSectionLabel));
+        OnPropertyChanged(nameof(ProfileNameLabel));
+        OnPropertyChanged(nameof(ProfileCliLabel));
+        OnPropertyChanged(nameof(ProfileWorkingDirLabel));
+        OnPropertyChanged(nameof(ProfileTerminalLabel));
+        OnPropertyChanged(nameof(ProfileAdminLabel));
+        OnPropertyChanged(nameof(ProfileSaveLabel));
+        OnPropertyChanged(nameof(ProfileLoadLabel));
+        OnPropertyChanged(nameof(ProfileDeleteLabel));
+        OnPropertyChanged(nameof(ProfileCreateLabel));
+        OnPropertyChanged(nameof(ProfileLastUsedLabel));
+        OnPropertyChanged(nameof(ProfileUseCountLabel));
     }
 
     private void OnPropertyChanged([CallerMemberName] string? propertyName = null)
