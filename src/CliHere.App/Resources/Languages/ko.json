@@ -17,6 +17,8 @@
   "Terminal.WindowsTerminal": "Windows Terminal",
   "Terminal.PowerShell": "PowerShell",
   "Terminal.PowerShell7": "PowerShell 7",
+  "Terminal.Cmd": "CMD",
+  "Terminal.GitBash": "Git Bash",
   "Cli.Column.Id": "ID",
   "Cli.Column.Name": "이름",
   "Cli.Column.Command": "명령어",

@@ -25,15 +25,37 @@ public sealed class TerminalLauncher : ITerminalLauncher
     {
         bool useWindowsTerminal = terminalMode == TerminalMode.WindowsTerminal && IsWindowsTerminalAvailable();
         bool usePowerShell7 = terminalMode == TerminalMode.PowerShell7 && IsCommandAvailable("pwsh.exe");
-        string shellExecutable = usePowerShell7 ? "pwsh.exe" : "powershell.exe";
-        string fileName = useWindowsTerminal ? "wt.exe" : shellExecutable;
-        string powerShellCommand = ResolvePowerShellCommand(command);
-        // -ExecutionPolicy Bypass scope: the spawned interactive session, so subsequent bare
-        // commands the user types (e.g. `opencode`, `claude`) which PowerShell resolves to
-        // npm-generated .ps1 shims still run despite a Restricted system policy.
-        string arguments = useWindowsTerminal
-            ? $"-d \"{workingDirectory}\" {shellExecutable} -ExecutionPolicy Bypass -NoExit -Command \"{powerShellCommand}\""
-            : $"-ExecutionPolicy Bypass -NoExit -Command \"{powerShellCommand}\"";
+        bool useCmd = terminalMode == TerminalMode.Cmd;
+        bool useGitBash = terminalMode == TerminalMode.GitBash && IsGitBashAvailable();
+
+        string fileName;
+        string arguments;
+
+        if (useWindowsTerminal)
+        {
+            string shellExecutable = usePowerShell7 ? "pwsh.exe" : "powershell.exe";
+            string powerShellCommand = ResolvePowerShellCommand(command);
+            fileName = "wt.exe";
+            arguments = $"-d \"{workingDirectory}\" {shellExecutable} -ExecutionPolicy Bypass -NoExit -Command \"{powerShellCommand}\"";
+        }
+        else if (useCmd)
+        {
+            fileName = "cmd.exe";
+            arguments = $"/k cd /d \"{workingDirectory}\" && {command}";
+        }
+        else if (useGitBash)
+        {
+            string gitBashPath = FindGitBashPath() ?? "bash.exe";
+            fileName = gitBashPath;
+            arguments = $"--cd \"{workingDirectory}\" -c \"{command}\"";
+        }
+        else
+        {
+            string shellExecutable = usePowerShell7 ? "pwsh.exe" : "powershell.exe";
+            string powerShellCommand = ResolvePowerShellCommand(command);
+            fileName = shellExecutable;
+            arguments = $"-ExecutionPolicy Bypass -NoExit -Command \"{powerShellCommand}\"";
+        }
 
         return new ProcessStartInfo
         {
@@ -43,6 +65,28 @@ public sealed class TerminalLauncher : ITerminalLauncher
             UseShellExecute = runAsAdministrator,
             Verb = runAsAdministrator ? "runas" : string.Empty,
         };
+    }
+
+    internal static bool IsGitBashAvailable() => FindGitBashPath() is not null;
+
+    private static string? FindGitBashPath()
+    {
+        string[] candidates =
+        [
+            @"C:\Program Files\Git\bin\bash.exe",
+            @"C:\Program Files (x86)\Git\bin\bash.exe",
+            Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Programs", "Git", "bin", "bash.exe"),
+        ];
+
+        foreach (string candidate in candidates)
+        {
+            if (File.Exists(candidate))
+            {
+                return candidate;
+            }
+        }
+
+        return null;
     }
 
     internal static string Quote(string value)

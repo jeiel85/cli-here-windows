@@ -177,6 +177,8 @@
                                     <ComboBoxItem Content="{Binding TerminalWindowsTerminalLabel}" Tag="{x:Static models:TerminalMode.WindowsTerminal}" />
                                     <ComboBoxItem Content="{Binding TerminalPowerShellLabel}" Tag="{x:Static models:TerminalMode.PowerShell}" />
                                     <ComboBoxItem Content="{Binding TerminalPowerShell7Label}" Tag="{x:Static models:TerminalMode.PowerShell7}" />
+                                    <ComboBoxItem Content="{Binding TerminalCmdLabel}" Tag="{x:Static models:TerminalMode.Cmd}" />
+                                    <ComboBoxItem Content="{Binding TerminalGitBashLabel}" Tag="{x:Static models:TerminalMode.GitBash}" />
                                 </ComboBox>
                             </Grid>
                             <CheckBox Margin="0,14,0,0"

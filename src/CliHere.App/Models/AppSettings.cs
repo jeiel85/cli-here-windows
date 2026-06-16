@@ -12,6 +12,8 @@ public enum TerminalMode
     WindowsTerminal,
     PowerShell,
     PowerShell7,
+    Cmd,
+    GitBash,
 }
 
 public sealed class AppSettings

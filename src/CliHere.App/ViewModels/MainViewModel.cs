@@ -95,6 +95,8 @@ public sealed class MainViewModel : INotifyPropertyChanged
     public string TerminalWindowsTerminalLabel => T("Terminal.WindowsTerminal");
     public string TerminalPowerShellLabel => T("Terminal.PowerShell");
     public string TerminalPowerShell7Label => T("Terminal.PowerShell7");
+    public string TerminalCmdLabel => T("Terminal.Cmd");
+    public string TerminalGitBashLabel => T("Terminal.GitBash");
     public string RefreshLabel => T("Action.Refresh");
     public string RemoveAllLabel => T("Action.RemoveAll");
     public string RepairLabel => T("Action.Repair");
@@ -567,6 +569,8 @@ public sealed class MainViewModel : INotifyPropertyChanged
         OnPropertyChanged(nameof(TerminalWindowsTerminalLabel));
         OnPropertyChanged(nameof(TerminalPowerShellLabel));
         OnPropertyChanged(nameof(TerminalPowerShell7Label));
+        OnPropertyChanged(nameof(TerminalCmdLabel));
+        OnPropertyChanged(nameof(TerminalGitBashLabel));
         OnPropertyChanged(nameof(RefreshLabel));
         OnPropertyChanged(nameof(RemoveAllLabel));
         OnPropertyChanged(nameof(RepairLabel));
