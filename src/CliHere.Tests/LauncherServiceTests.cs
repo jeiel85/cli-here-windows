@@ -63,6 +63,28 @@ public sealed class LauncherServiceTests
         Assert.Equal("foo", fakeLauncher.LastCommand);
     }
 
+    [Theory]
+    [InlineData(TerminalMode.WindowsTerminal)]
+    [InlineData(TerminalMode.PowerShell)]
+    [InlineData(TerminalMode.PowerShell7)]
+    [InlineData(TerminalMode.Cmd)]
+    [InlineData(TerminalMode.GitBash)]
+    public void RunCli_WithAllTerminalModes_CallsTerminalLauncher(TerminalMode mode)
+    {
+        FakeTerminalLauncher fakeLauncher;
+        SettingsService settingsService = new(Path.Combine(Path.GetTempPath(), "CliHere.Tests", Guid.NewGuid().ToString("N")));
+        settingsService.Save(new AppSettings { Terminal = mode });
+
+        LauncherService service = new(new CliDefinitionService(), settingsService, fakeLauncher = new FakeTerminalLauncher());
+        string tempDir = Path.Combine(Path.GetTempPath(), "CliHere.Tests", Guid.NewGuid().ToString("N"));
+        Directory.CreateDirectory(tempDir);
+
+        service.RunCli("claude", tempDir);
+
+        Assert.Equal(mode, fakeLauncher.LastTerminalMode);
+        Assert.Equal("claude", fakeLauncher.LastCommand);
+    }
+
     private static LauncherService CreateService(out FakeTerminalLauncher fakeLauncher)
     {
         fakeLauncher = new FakeTerminalLauncher();
@@ -80,9 +102,13 @@ public sealed class LauncherServiceTests
     {
         public string? LastWorkingDirectory { get; private set; }
         public string? LastCommand { get; private set; }
+        public TerminalMode LastTerminalMode { get; private set; }
+        public bool LastRunAsAdministrator { get; private set; }
 
         public void Launch(TerminalMode terminalMode, bool runAsAdministrator, string workingDirectory, string command)
         {
+            LastTerminalMode = terminalMode;
+            LastRunAsAdministrator = runAsAdministrator;
             LastWorkingDirectory = workingDirectory;
             LastCommand = command;
         }

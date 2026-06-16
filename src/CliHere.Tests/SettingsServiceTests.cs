@@ -56,4 +56,48 @@ public sealed class SettingsServiceTests
         Assert.False(loaded.RunAsAdministrator);
         Assert.Null(loaded.SkippedUpdateVersion);
     }
+
+    [Fact]
+    public void SettingsService_WhenCustomPath_IsPortable()
+    {
+        string tempDir = Path.Combine(Path.GetTempPath(), "CliHere.Tests", Guid.NewGuid().ToString("N"));
+        SettingsService service = new(tempDir);
+
+        Assert.True(service.IsPortable);
+        Assert.Equal(tempDir, service.SettingsDirectoryPath);
+    }
+
+    [Fact]
+    public void SaveAndLoad_WithNewTerminalModes_PersistsCorrectly()
+    {
+        string tempDir = Path.Combine(Path.GetTempPath(), "CliHere.Tests", Guid.NewGuid().ToString("N"));
+        SettingsService service = new(tempDir);
+        
+        AppSettings saved = new()
+        {
+            Terminal = TerminalMode.Cmd,
+        };
+        service.Save(saved);
+        AppSettings loaded = service.Load();
+        
+        Assert.Equal(TerminalMode.Cmd, loaded.Terminal);
+    }
+
+    [Theory]
+    [InlineData(TerminalMode.WindowsTerminal)]
+    [InlineData(TerminalMode.PowerShell)]
+    [InlineData(TerminalMode.PowerShell7)]
+    [InlineData(TerminalMode.Cmd)]
+    [InlineData(TerminalMode.GitBash)]
+    public void SaveAndLoad_AllTerminalModes_PersistsCorrectly(TerminalMode mode)
+    {
+        string tempDir = Path.Combine(Path.GetTempPath(), "CliHere.Tests", Guid.NewGuid().ToString("N"));
+        SettingsService service = new(tempDir);
+        
+        AppSettings saved = new() { Terminal = mode };
+        service.Save(saved);
+        AppSettings loaded = service.Load();
+        
+        Assert.Equal(mode, loaded.Terminal);
+    }
 }

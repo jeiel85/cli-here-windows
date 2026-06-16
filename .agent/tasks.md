@@ -40,4 +40,12 @@
 - [x] Improve release notes with download and installation instructions
 - [x] Add portable mode support
 
+## v0.4.0 Planning
+
+- [ ] CLI 프로파일 저장 기능
+- [ ] CLI 실행 이력 관리
+- [ ] 테마 커스터마이징 (다크/라이트 모드)
+- [ ] CLI 그룹 기능
+- [ ] CLI 실행 로그
+- [ ] CLI 버전 표시
 

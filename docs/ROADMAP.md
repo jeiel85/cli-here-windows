@@ -31,3 +31,12 @@
 - Portable mode
 - More terminal profiles
 - Better accessibility
+
+## v0.4.0
+
+- CLI 프로파일 저장 기능 (자주 사용하는 CLI 설정 저장)
+- CLI 실행 이력 관리
+- 테마 커스터마이징 (다크/라이트 모드)
+- CLI 그룹 기능 (폴더별 CLI 그룹핑)
+- CLI 실행 로그
+- CLI 버전 표시
