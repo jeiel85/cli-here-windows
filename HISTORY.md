@@ -2,6 +2,15 @@
 
 ## 2026-06-16
 
+- 작업: 깃허브 저장소 설명 및 토픽 설정, 리드미 파일 최신화
+- 변경 파일:
+  - README.md (AntiGravity CLI 변경 및 Cursor/Windsurf/Aider/Continue/Cline 목록 9개로 확장)
+  - README.en.md (AntiGravity CLI 변경 및 Cursor/Windsurf/Aider/Continue/Cline 목록 9개로 확장)
+- 검증:
+  - gh repo view (설명 및 토픽 갱신 검증 완료)
+  - dotnet build/test (기본 검증 완료)
+- 결과: 성공
+
 - 작업: 터미널 프로파일 확장, 접근성 개선, 릴리즈 노트 자동 생성 개선
 - 변경 파일:
   - src/CliHere.App/Models/AppSettings.cs (TerminalMode에 Cmd, GitBash 추가)

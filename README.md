@@ -46,10 +46,15 @@ CLI Here는 이 과정을 탐색기 우클릭으로 줄여줍니다.
   - 폴더 빈 공간 우클릭
   - 바탕화면 우클릭
 - 기본 지원 CLI:
-  - Gemini CLI
+  - AntiGravity CLI
   - OpenCode
   - Claude Code
   - OpenAI Codex CLI
+  - Cursor CLI
+  - Windsurf CLI
+  - Aider
+  - Continue
+  - Cline
 - 사용자 정의 CLI 추가/삭제
 - 터미널 모드:
   - Windows Terminal
@@ -135,7 +140,7 @@ Windows 11의 **새(기본) 우클릭 메뉴**는 시스템 정책상 클래식 
 1. `Shift` + 우클릭 → 클래식 메뉴 즉시 표시
 2. 일반 우클릭 → 메뉴 맨 아래 `더 많은 옵션 표시 (Show more options)` 클릭
 
-클래식 메뉴에서 `CLI 여기서 열기` 항목 위에 마우스를 올리면 4개 CLI cascade가 펼쳐집니다.
+클래식 메뉴에서 `CLI 여기서 열기` 항목 위에 마우스를 올리면 9개 CLI cascade가 펼쳐집니다.
 
 > Windows 10 클래식 메뉴 사용자는 추가 단계 없이 바로 표시됩니다.
 

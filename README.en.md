@@ -37,10 +37,15 @@ CLI Here removes those steps by adding Explorer context menu actions that open y
   - Folder background right-click
   - Desktop background right-click
 - Built-in CLIs:
-  - Gemini CLI
+  - AntiGravity CLI
   - OpenCode
   - Claude Code
   - OpenAI Codex CLI
+  - Cursor CLI
+  - Windsurf CLI
+  - Aider
+  - Continue
+  - Cline
 - Custom CLI definitions (add/remove)
 - Terminal modes:
   - Windows Terminal
@@ -124,7 +129,7 @@ The Windows 11 **new (default) right-click menu hides classic registry entries b
 1. `Shift` + right-click → classic menu opens immediately
 2. Right-click → click `Show more options` at the bottom
 
-Hover `CLI Here` in the classic menu to expand the cascade with all four CLIs.
+Hover `CLI Here` in the classic menu to expand the cascade with all nine CLIs.
 
 > Windows 10 classic menu users will see the entry without any extra step.
 
