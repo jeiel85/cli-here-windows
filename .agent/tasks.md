@@ -35,5 +35,8 @@
 - [x] Fix context menu icon display issue
 - [x] Improve terminal launch stability with path quoting
 - [x] Auto update UX polish (localized progress status in dialog and stronger error/timeout messaging)
+- [x] Add CMD and Git Bash terminal profiles
+- [x] Improve accessibility with AutomationProperties and TabIndex
+- [x] Improve release notes with download and installation instructions
 - [ ] Research Windows 11 native context menu integration
 

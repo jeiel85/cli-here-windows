@@ -2,13 +2,14 @@
 
 ## Current status
 
-v0.3.0 implementation completed with CLI additions and bug fixes.
+v0.3.0 implementation completed with terminal profiles, accessibility, and release notes improvements.
 
 ## 2026-06-16
 
-- Improved auto-update UX: localized dialog headers, progress status, and error messages.
-- Added specific error messages for file locks, permission denied, network errors, and SHA256 mismatch.
-- Updated Korean and English resource files with new update dialog strings.
+- Added CMD terminal mode with 'cmd /k cd /d && command' support.
+- Added Git Bash terminal mode with automatic bash.exe detection.
+- Improved accessibility with AutomationProperties and TabIndex for keyboard navigation.
+- Enhanced release notes with download and installation instructions.
 - Renamed Gemini CLI to AntiGravity CLI (`gemini` → `agy` command).
 - Added support for popular AI coding CLIs: Cursor CLI, Windsurf CLI, Aider, Continue, Cline.
 - Enhanced CLI detection with additional well-known paths for new CLIs.

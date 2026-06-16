@@ -2,6 +2,20 @@
 
 ## 2026-06-16
 
+- 작업: 터미널 프로파일 확장, 접근성 개선, 릴리즈 노트 자동 생성 개선
+- 변경 파일:
+  - src/CliHere.App/Models/AppSettings.cs (TerminalMode에 Cmd, GitBash 추가)
+  - src/CliHere.App/Services/TerminalLauncher.cs (CMD/GitBash 실행 지원)
+  - src/CliHere.App/ViewModels/MainViewModel.cs (CMD/GitBash 라벨 추가)
+  - src/CliHere.App/MainWindow.xaml (접근성 특성 추가, 터미널 ComboBox 확장)
+  - src/CliHere.App/Resources/Languages/ko.json (CMD/GitBash 문자열 추가)
+  - src/CliHere.App/Resources/Languages/en.json (CMD/GitBash 문자열 추가)
+  - .github/workflows/release.yml (릴리즈 노트 설치 안내 추가)
+- 검증:
+  - dotnet build --configuration Release (성공)
+  - dotnet test --configuration Release (21/21 통과)
+- 결과: 성공
+
 - 작업: 자동 업데이트 UX 고도화 - 다이얼로그 현지화, 오류 메시지 강화
 - 변경 파일:
   - src/CliHere.App/Views/UpdateDialog.xaml (하드코딩 텍스트 제거)
