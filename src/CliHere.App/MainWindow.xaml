@@ -116,7 +116,13 @@
                         <ColumnDefinition Width="Auto" />
                     </Grid.ColumnDefinitions>
                     <StackPanel Margin="0,0,16,0">
-                        <TextBlock Text="{Binding AppTitle}" FontSize="22" FontWeight="Bold" />
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="{Binding AppTitle}" FontSize="22" FontWeight="Bold" />
+                            <TextBlock Text="{Binding PortableLabel}" 
+                                       Foreground="{StaticResource AccentBrush}"
+                                       FontSize="14" FontWeight="SemiBold"
+                                       VerticalAlignment="Bottom" Margin="8,0,0,4" />
+                        </StackPanel>
                         <TextBlock Margin="0,4,0,0"
                                    Foreground="{StaticResource TextSecondaryBrush}"
                                    FontSize="12"

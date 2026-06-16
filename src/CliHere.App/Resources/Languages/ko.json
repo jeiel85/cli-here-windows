@@ -60,6 +60,8 @@
   "Update.Dialog.Error.ApplyFailed": "업데이트 적용에 실패했습니다. 수동으로 다시 설치해 주세요.",
   "Update.Dialog.Error.NetworkDuringDownload": "다운로드 중 네트워크 오류가 발생했습니다.",
   "Update.Dialog.Error.Cancelled": "업데이트가 취소되었습니다.",
+  "Settings.PortableMode": "포터블 모드",
+  "Settings.PortableModeHint": "설정이 앱과 같은 폴더에 저장됩니다.",
   "ContextMenu.OpenWith": "{0} 여기서 열기",
   "Message.Applied": "설정과 우클릭 메뉴가 적용되었습니다.",
   "Message.Removed": "CLI Here 우클릭 메뉴가 제거되었습니다.",

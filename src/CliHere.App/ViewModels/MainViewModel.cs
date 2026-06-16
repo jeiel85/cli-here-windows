@@ -120,6 +120,8 @@ public sealed class MainViewModel : INotifyPropertyChanged
     public string AddCustomCliLabel => T("CustomCli.Add");
     public string InstalledStatusLabel => T("Cli.Status.Installed");
     public string NotInstalledStatusLabel => T("Cli.Status.NotInstalled");
+    public bool IsPortable => _settingsService.IsPortable;
+    public string PortableLabel => _settingsService.IsPortable ? "(Portable)" : string.Empty;
 
     public LocalizationService LocalizationService => _localizationService;
 

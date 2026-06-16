@@ -60,6 +60,8 @@
   "Update.Dialog.Error.ApplyFailed": "Failed to apply update. Please reinstall manually.",
   "Update.Dialog.Error.NetworkDuringDownload": "Network error occurred during download.",
   "Update.Dialog.Error.Cancelled": "Update was cancelled.",
+  "Settings.PortableMode": "Portable mode",
+  "Settings.PortableModeHint": "Settings are saved in the same folder as the app.",
   "ContextMenu.OpenWith": "Open {0} here",
   "Message.Applied": "Settings and context menu were applied.",
   "Message.Removed": "CLI Here context menu entries were removed.",
