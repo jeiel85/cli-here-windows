@@ -29,7 +29,5 @@
 ## v0.3.0
 
 - Portable mode
-- MSI/MSIX packaging research
-- Windows 11 native context menu extension research
 - More terminal profiles
 - Better accessibility
