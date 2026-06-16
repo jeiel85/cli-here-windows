@@ -61,6 +61,20 @@ jobs:
             Write-Host "::warning::No CHANGELOG section found for $tag, using fallback"
             $body = "## $tag`n`nSee https://github.com/jeiel85/cli-here/blob/main/CHANGELOG.md for details."
           }
+          
+          # Add download and installation instructions
+          $body += "`n`n---`n`n"
+          $body += "## Download`n`n"
+          $body += "- **CliHere-win-x64.zip** - Main application (requires .NET 9 Desktop Runtime)`n"
+          $body += "- **CliHere.exe** + **CliHere.exe.sha256** - For update flow verification`n`n"
+          $body += "## Installation`n`n"
+          $body += "1. Download `CliHere-win-x64.zip` from Assets below`n"
+          $body += "2. Extract to your preferred folder`n"
+          $body += "3. Run `CliHere.exe` and configure your settings`n"
+          $body += "4. Click `Apply` to register context menu entries`n`n"
+          $body += "**Requirements:** .NET 9 Desktop Runtime (x64)`n"
+          $body += "**Full Changelog:** https://github.com/jeiel85/cli-here/blob/main/CHANGELOG.md"
+          
           $body | Out-File -FilePath release_body.md -Encoding utf8
 
       - name: Upload artifact
