@@ -13,7 +13,8 @@
         WindowStyle="None"
         AllowsTransparency="True"
         Background="Transparent"
-        ResizeMode="CanResize">
+        ResizeMode="CanResize"
+        AutomationProperties.Name="{Binding AppTitle}">
 
     <shell:WindowChrome.WindowChrome>
         <shell:WindowChrome CaptionHeight="42"
@@ -84,18 +85,24 @@
                                 shell:WindowChrome.IsHitTestVisibleInChrome="True">
                         <Button Style="{StaticResource WindowChromeButton}"
                                 Click="MinimizeButton_Click"
-                                ToolTip="Minimize">
-                            <TextBlock Text="—" FontSize="13" />
+                                ToolTip="Minimize"
+                                AutomationProperties.Name="Minimize"
+                                TabIndex="100">
+                            <TextBlock Text="—" FontSize="13" IsHitTestVisible="False" />
                         </Button>
                         <Button Style="{StaticResource WindowChromeButton}"
                                 Click="MaxRestoreButton_Click"
-                                ToolTip="Maximize">
-                            <TextBlock x:Name="MaxRestoreGlyph" Text="▢" FontSize="11" />
+                                ToolTip="Maximize"
+                                AutomationProperties.Name="Maximize"
+                                TabIndex="101">
+                            <TextBlock x:Name="MaxRestoreGlyph" Text="▢" FontSize="11" IsHitTestVisible="False" />
                         </Button>
                         <Button Style="{StaticResource WindowCloseButton}"
                                 Click="CloseButton_Click"
-                                ToolTip="Close">
-                            <TextBlock Text="✕" FontSize="11" />
+                                ToolTip="Close"
+                                AutomationProperties.Name="Close"
+                                TabIndex="102">
+                            <TextBlock Text="✕" FontSize="11" IsHitTestVisible="False" />
                         </Button>
                     </StackPanel>
                 </Grid>
@@ -162,7 +169,9 @@
                                            VerticalAlignment="Center" />
                                 <ComboBox Grid.Column="1"
                                           SelectedValue="{Binding Language}"
-                                          SelectedValuePath="Tag">
+                                          SelectedValuePath="Tag"
+                                          AutomationProperties.Name="{Binding LanguageLabel}"
+                                          TabIndex="1">
                                     <ComboBoxItem Content="{Binding LanguageSystemLabel}" Tag="{x:Static models:LanguageMode.System}" />
                                     <ComboBoxItem Content="{Binding LanguageKoreanLabel}" Tag="{x:Static models:LanguageMode.Korean}" />
                                     <ComboBoxItem Content="{Binding LanguageEnglishLabel}" Tag="{x:Static models:LanguageMode.English}" />
@@ -173,7 +182,9 @@
                                            VerticalAlignment="Center" />
                                 <ComboBox Grid.Column="4"
                                           SelectedValue="{Binding Terminal}"
-                                          SelectedValuePath="Tag">
+                                          SelectedValuePath="Tag"
+                                          AutomationProperties.Name="{Binding TerminalLabel}"
+                                          TabIndex="2">
                                     <ComboBoxItem Content="{Binding TerminalWindowsTerminalLabel}" Tag="{x:Static models:TerminalMode.WindowsTerminal}" />
                                     <ComboBoxItem Content="{Binding TerminalPowerShellLabel}" Tag="{x:Static models:TerminalMode.PowerShell}" />
                                     <ComboBoxItem Content="{Binding TerminalPowerShell7Label}" Tag="{x:Static models:TerminalMode.PowerShell7}" />
@@ -183,7 +194,9 @@
                             </Grid>
                             <CheckBox Margin="0,14,0,0"
                                       IsChecked="{Binding RunAsAdministrator}"
-                                      Content="{Binding RunAsAdministratorLabel}" />
+                                      Content="{Binding RunAsAdministratorLabel}"
+                                      AutomationProperties.Name="{Binding RunAsAdministratorLabel}"
+                                      TabIndex="3" />
                         </StackPanel>
                     </Border>
 
@@ -333,15 +346,23 @@
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
                     <Button Style="{StaticResource SecondaryButtonStyle}"
                             Content="{Binding RefreshLabel}" Width="100" Margin="0,0,8,0"
-                            Command="{Binding RefreshCommand}" />
+                            Command="{Binding RefreshCommand}"
+                            AutomationProperties.Name="{Binding RefreshLabel}"
+                            TabIndex="10" />
                     <Button Style="{StaticResource DangerButtonStyle}"
                             Content="{Binding RemoveAllLabel}" Width="120" Margin="0,0,8,0"
-                            Command="{Binding RemoveAllCommand}" />
+                            Command="{Binding RemoveAllCommand}"
+                            AutomationProperties.Name="{Binding RemoveAllLabel}"
+                            TabIndex="11" />
                     <Button Style="{StaticResource SecondaryButtonStyle}"
                             Content="{Binding RepairLabel}" Width="90" Margin="0,0,8,0"
-                            Command="{Binding RepairCommand}" />
+                            Command="{Binding RepairCommand}"
+                            AutomationProperties.Name="{Binding RepairLabel}"
+                            TabIndex="12" />
                     <Button Content="{Binding ApplyLabel}" Width="110"
-                            Command="{Binding ApplyCommand}" />
+                            Command="{Binding ApplyCommand}"
+                            AutomationProperties.Name="{Binding ApplyLabel}"
+                            TabIndex="13" />
                 </StackPanel>
             </Border>
         </Grid>
