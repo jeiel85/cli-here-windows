@@ -106,6 +106,50 @@ public sealed class TerminalLauncherTests
         Assert.False(TerminalLauncher.IsCommandAvailable("wt.exe"));
     }
 
+    [Fact]
+    public void CreateStartInfo_WhenCmdMode_UsesCmdExecutable()
+    {
+        using PathScope pathScope = PathScope.CreateEmpty();
+
+        ProcessStartInfo psi = TerminalLauncher.CreateStartInfo(
+            TerminalMode.Cmd,
+            runAsAdministrator: false,
+            workingDirectory: "C:\\Work Folder",
+            command: "gemini");
+
+        Assert.Equal("cmd.exe", psi.FileName);
+        Assert.Contains("/k cd /d \"C:\\Work Folder\" && gemini", psi.Arguments, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void CreateStartInfo_WhenGitBashMode_UsesBashExecutable()
+    {
+        using PathScope pathScope = PathScope.CreateEmpty();
+
+        ProcessStartInfo psi = TerminalLauncher.CreateStartInfo(
+            TerminalMode.GitBash,
+            runAsAdministrator: false,
+            workingDirectory: "C:\\Work Folder",
+            command: "gemini");
+
+        Assert.Contains("bash", psi.FileName, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains("--cd \"C:\\Work Folder\"", psi.Arguments, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void CreateStartInfo_WhenGitBashNotAvailable_FallsBackToBash()
+    {
+        using PathScope pathScope = PathScope.CreateEmpty();
+
+        ProcessStartInfo psi = TerminalLauncher.CreateStartInfo(
+            TerminalMode.GitBash,
+            runAsAdministrator: false,
+            workingDirectory: "C:\\Work Folder",
+            command: "gemini");
+
+        Assert.Contains("bash", psi.FileName, StringComparison.OrdinalIgnoreCase);
+    }
+
     private sealed class PathScope : IDisposable
     {
         private readonly string? _originalPath;

@@ -46,6 +46,8 @@ CLI Here removes those steps by adding Explorer context menu actions that open y
   - Windows Terminal
   - PowerShell
   - PowerShell 7 (`pwsh`, fallback-aware)
+  - CMD
+  - Git Bash
 - Optional administrator launch (`runas` + UAC)
 - Explorer menu grouping under a single `CLI Here` cascade parent
 - One-click Repair / Remove-all registry actions

@@ -55,6 +55,8 @@ CLI Here는 이 과정을 탐색기 우클릭으로 줄여줍니다.
   - Windows Terminal
   - PowerShell
   - PowerShell 7 (`pwsh` 감지/fallback)
+  - CMD
+  - Git Bash
 - 선택적 관리자 권한 실행(UAC)
 - `CLI Here` 상위 메뉴 그룹화 (cascade)
 - 레지스트리 복구(Repair) / 전체 제거 기능

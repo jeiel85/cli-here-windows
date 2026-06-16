@@ -5,20 +5,30 @@
 ### Changed
 
 - Renamed Gemini CLI to AntiGravity CLI (`gemini` → `agy` command).
-- Added support for popular AI coding CLIs: Cursor CLI, Windsurf CLI, Aider, Continue, Cline.
-- Enhanced CLI detection with additional well-known paths for new CLIs.
-- Improved terminal launch stability with better path quoting for directories containing spaces.
-- Added icon display for individual CLI entries in Windows Explorer context menu.
+- Added support for popular AI coding CLIs: Cursor CLI, Windsurf CLI, Aider, Continue, Cline (9 CLIs total).
+- Added CMD terminal mode with `cmd /k cd /d && command` support.
+- Added Git Bash terminal mode with automatic `bash.exe` detection.
+- Improved auto-update UX: localized dialog headers, progress status, and error messages.
+- Enhanced release notes with download and installation instructions.
+- Added Korean/English localization for new terminal modes.
+
+### Added
+
+- AutomationProperties.Name for Window, ComboBox, CheckBox, and Button controls.
+- TabIndex for logical keyboard navigation order.
+- Specific error messages for file locks, permission denied, network errors, and SHA256 mismatch.
 
 ### Fixed
 
 - Fixed context menu icon not showing app icon by adding Icon value to child registry keys.
 - Improved path handling in TerminalLauncher to prevent launch failures with special characters.
+- Enhanced CLI detection with additional well-known paths for new CLIs.
 
 ### Verification
 
 - `dotnet build --configuration Release` passed.
 - `dotnet test --configuration Release` passed (21/21 tests).
+- GitHub Actions CI passed (2m9s).
 
 ## v0.2.2 - 2026-05-10
 
