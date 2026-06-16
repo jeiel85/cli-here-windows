@@ -80,10 +80,15 @@ You need:
 
 | CLI | Command | Detection | Install / Docs |
 |---|---|---|---|
-| Gemini CLI | `gemini` | PATH | https://google-gemini.github.io/gemini-cli/docs/get-started/ |
+| AntiGravity CLI | `agy` | PATH | https://github.com/nicholasgasior/antigravity-cli |
 | OpenCode | `opencode` | PATH | https://opencode.ai/docs/cli/ |
 | Claude Code | `claude` | PATH | https://docs.claude.com/en/docs/claude-code/setup |
 | OpenAI Codex CLI | `codex` | PATH | https://help.openai.com/en/articles/11096431-openai-codex-ci-getting-started |
+| Cursor CLI | `cursor` | PATH | https://cursor.sh/docs |
+| Windsurf CLI | `windsurf` | PATH | https://windsurf.com/docs |
+| Aider | `aider` | PATH | https://aider.chat/docs |
+| Continue | `continue` | PATH | https://continue.dev/docs |
+| Cline | `cline` | PATH | https://cline.bot/docs |
 
 CLI Here does **not** auto-install third-party CLIs. It only detects availability and provides official links.
 

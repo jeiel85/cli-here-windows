@@ -1,5 +1,24 @@
 # History
 
+## 2026-06-16
+
+- 작업: Gemini CLI → AntiGravity CLI 이름 변경, 신규 CLI 추가, 레지스트리 아이콘 표시 문제 수정, 런칭 안정성 강화
+- 변경 파일:
+  - src/CliHere.App/Services/CliDefinitionService.cs (gemini → agy, Cursor/Windsurf/Aider/Continue/Cline 추가)
+  - src/CliHere.App/Services/ContextMenuRegistryService.cs (자식 키 Icon 설정 추가)
+  - src/CliHere.App/Services/CliDetectionService.cs (well-known 경로 확장)
+  - src/CliHere.App/Services/TerminalLauncher.cs (경로 quotation 처리 개선)
+  - src/CliHere.Tests/CliDefinitionServiceTests.cs (새 CLI 테스트 반영)
+  - README.md (지원 CLI 테이블 업데이트)
+  - README.en.md (지원 CLI 테이블 업데이트)
+  - CHANGELOG.md
+  - HISTORY.md
+- 검증:
+  - dotnet build --configuration Release (성공)
+  - dotnet test --configuration Release (21/21 통과)
+- 결과: 성공
+- 후속 작업: 사용자가 실제 환경에서 런칭 테스트 필요
+
 ## 2026-05-10
 
 - 작업: v0.2.2 패치 — 자동 업데이트 정상화 / 업데이트 다이얼로그 디자인 정리 / 릴리즈 노트 자동 추출 / PowerShell 실행 정책 우회

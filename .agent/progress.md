@@ -2,7 +2,19 @@
 
 ## Current status
 
-Initial MVP implementation baseline completed.
+v0.3.0 implementation completed with CLI additions and bug fixes.
+
+## 2026-06-16
+
+- Renamed Gemini CLI to AntiGravity CLI (`gemini` → `agy` command).
+- Added support for popular AI coding CLIs: Cursor CLI, Windsurf CLI, Aider, Continue, Cline.
+- Enhanced CLI detection with additional well-known paths for new CLIs.
+- Improved terminal launch stability with better path quoting for directories containing spaces.
+- Added icon display for individual CLI entries in Windows Explorer context menu.
+- Fixed context menu icon not showing app icon by adding Icon value to child registry keys.
+- Verification:
+  - `dotnet build --configuration Release` passed.
+  - `dotnet test --configuration Release` passed (21/21 tests).
 
 ## 2026-05-10
 

@@ -30,11 +30,10 @@
 - [x] Add custom CLI definitions
 - [x] Add PowerShell 7 support
 - [x] Add repair context menu action
+- [x] Rename Gemini CLI to AntiGravity CLI (`gemini` → `agy` command)
+- [x] Add support for Cursor CLI, Windsurf CLI, Aider, Continue, Cline
+- [x] Fix context menu icon display issue
+- [x] Improve terminal launch stability with path quoting
 - [ ] Research Windows 11 native context menu integration
-
-
-
-
 - [ ] Auto update UX polish (localized progress status in dialog and stronger error/timeout messaging)
-
 

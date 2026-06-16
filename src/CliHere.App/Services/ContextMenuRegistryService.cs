@@ -70,6 +70,7 @@ public sealed class ContextMenuRegistryService
         string keyName = BuildOwnedKeyName(cliId);
         using RegistryKey commandOwner = shellKey.CreateSubKey(keyName) ?? throw new InvalidOperationException("Unable to create command owner key.");
         commandOwner.SetValue("MUIVerb", menuLabel, RegistryValueKind.String);
+        commandOwner.SetValue("Icon", executablePath, RegistryValueKind.String);
 
         using RegistryKey commandKey = commandOwner.CreateSubKey("command") ?? throw new InvalidOperationException("Unable to create command key.");
         commandKey.SetValue(string.Empty, BuildLauncherCommand(executablePath, cliId, argumentToken), RegistryValueKind.String);

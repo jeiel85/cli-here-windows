@@ -103,6 +103,14 @@ public sealed class CliDetectionService
             Path.Combine(userProfile, ".dotnet", "tools"),
             Path.Combine(userProfile, ".bun", "bin"),
             Path.Combine(localApp, "Programs", "opencode"),
+            Path.Combine(localApp, "Programs", "cursor"),
+            Path.Combine(userProfile, ".cursor", "bin"),
+            Path.Combine(userProfile, ".windsurf", "bin"),
+            Path.Combine(userProfile, ".aider", "bin"),
+            Path.Combine(userProfile, ".continue", "bin"),
+            Path.Combine(userProfile, ".cline", "bin"),
+            Path.Combine(roaming, "Python", "Scripts"),
+            Path.Combine(localApp, "agy", "bin"),
         ];
 
         foreach (string candidate in candidates)

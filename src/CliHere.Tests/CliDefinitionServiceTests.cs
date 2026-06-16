@@ -11,10 +11,15 @@ public sealed class CliDefinitionServiceTests
         CliDefinitionService service = new();
         var ids = service.GetAll().Select(x => x.Id).ToArray();
 
-        Assert.Contains("gemini", ids);
+        Assert.Contains("agy", ids);
         Assert.Contains("opencode", ids);
         Assert.Contains("claude", ids);
         Assert.Contains("codex", ids);
+        Assert.Contains("cursor", ids);
+        Assert.Contains("windsurf", ids);
+        Assert.Contains("aider", ids);
+        Assert.Contains("continue", ids);
+        Assert.Contains("cline", ids);
     }
 
     [Fact]

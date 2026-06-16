@@ -91,10 +91,15 @@ CLI Here는 이 과정을 탐색기 우클릭으로 줄여줍니다.
 
 | CLI | 명령어 | 감지 방식 | 설치/문서 |
 |---|---|---|---|
-| Gemini CLI | `gemini` | PATH | https://google-gemini.github.io/gemini-cli/docs/get-started/ |
+| AntiGravity CLI | `agy` | PATH | https://github.com/nicholasgasior/antigravity-cli |
 | OpenCode | `opencode` | PATH | https://opencode.ai/docs/cli/ |
 | Claude Code | `claude` | PATH | https://docs.claude.com/en/docs/claude-code/setup |
 | OpenAI Codex CLI | `codex` | PATH | https://help.openai.com/en/articles/11096431-openai-codex-ci-getting-started |
+| Cursor CLI | `cursor` | PATH | https://cursor.sh/docs |
+| Windsurf CLI | `windsurf` | PATH | https://windsurf.com/docs |
+| Aider | `aider` | PATH | https://aider.chat/docs |
+| Continue | `continue` | PATH | https://continue.dev/docs |
+| Cline | `cline` | PATH | https://cline.bot/docs |
 
 CLI Here는 서드파티 CLI를 자동 설치하지 않고, 감지 및 공식 링크만 제공합니다.
 

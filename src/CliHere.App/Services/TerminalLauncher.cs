@@ -32,8 +32,8 @@ public sealed class TerminalLauncher : ITerminalLauncher
         // commands the user types (e.g. `opencode`, `claude`) which PowerShell resolves to
         // npm-generated .ps1 shims still run despite a Restricted system policy.
         string arguments = useWindowsTerminal
-            ? $"-d {Quote(workingDirectory)} {shellExecutable} -ExecutionPolicy Bypass -NoExit -Command {Quote(powerShellCommand)}"
-            : $"-ExecutionPolicy Bypass -NoExit -Command {Quote(powerShellCommand)}";
+            ? $"-d \"{workingDirectory}\" {shellExecutable} -ExecutionPolicy Bypass -NoExit -Command \"{powerShellCommand}\""
+            : $"-ExecutionPolicy Bypass -NoExit -Command \"{powerShellCommand}\"";
 
         return new ProcessStartInfo
         {
