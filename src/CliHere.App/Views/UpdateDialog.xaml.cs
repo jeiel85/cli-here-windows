@@ -9,6 +9,9 @@ public partial class UpdateDialog : Window
 {
     private readonly Action _onSkip;
     private readonly string _errorTitle;
+    private readonly string _downloadingLabel;
+    private readonly string _verifyingLabel;
+    private readonly string _restartingLabel;
 
     public event Action? OnUpdateRequested;
 
@@ -18,15 +21,21 @@ public partial class UpdateDialog : Window
         string title,
         string skipLabel,
         string updateLabel,
-        string errorTitle)
+        string errorTitle,
+        string downloadingLabel,
+        string verifyingLabel,
+        string restartingLabel)
     {
         InitializeComponent();
         _onSkip = onSkip;
         _errorTitle = errorTitle;
-        TitleText.Text = title;
+        _downloadingLabel = downloadingLabel;
+        _verifyingLabel = verifyingLabel;
+        _restartingLabel = restartingLabel;
+        HeaderText.Text = title;
         SkipBtn.Content = skipLabel;
         UpdateBtn.Content = updateLabel;
-        StatusText.Text = "Downloading...";
+        StatusText.Text = downloadingLabel;
         PercentText.Text = "0%";
         RenderMarkdown(releaseNotes);
         MouseLeftButtonDown += (_, _) => DragMove();

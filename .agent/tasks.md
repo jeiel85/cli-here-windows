@@ -34,6 +34,6 @@
 - [x] Add support for Cursor CLI, Windsurf CLI, Aider, Continue, Cline
 - [x] Fix context menu icon display issue
 - [x] Improve terminal launch stability with path quoting
+- [x] Auto update UX polish (localized progress status in dialog and stronger error/timeout messaging)
 - [ ] Research Windows 11 native context menu integration
-- [ ] Auto update UX polish (localized progress status in dialog and stronger error/timeout messaging)
 

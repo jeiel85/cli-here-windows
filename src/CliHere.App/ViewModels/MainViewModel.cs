@@ -472,7 +472,10 @@ public sealed class MainViewModel : INotifyPropertyChanged
             title: T("Update.DialogTitle"),
             skipLabel: T("Update.Skip"),
             updateLabel: T("Update.UpdateNow"),
-            errorTitle: T("Update.ErrorTitle"));
+            errorTitle: T("Update.ErrorTitle"),
+            downloadingLabel: T("Update.Status.Downloading"),
+            verifyingLabel: T("Update.Status.Verifying"),
+            restartingLabel: T("Update.Restarting"));
 
         dialog.OnUpdateRequested += () =>
         {

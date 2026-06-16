@@ -153,27 +153,38 @@ public sealed class UpdateService
         string tempZip = Path.Combine(Path.GetTempPath(), $"{ProcessName}_new_{Guid.NewGuid():N}.zip");
         onProgress(0, "Downloading...");
 
-        using (HttpResponseMessage response = await Http.GetAsync(downloadUrl, HttpCompletionOption.ResponseHeadersRead))
+        try
         {
-            response.EnsureSuccessStatusCode();
-            long totalBytes = response.Content.Headers.ContentLength ?? 0;
-
-            using Stream contentStream = await response.Content.ReadAsStreamAsync();
-            await using FileStream fileStream = new(tempZip, FileMode.Create, FileAccess.Write, FileShare.None, 8192, true);
-
-            byte[] buffer = new byte[8192];
-            long totalRead = 0;
-            int read;
-            while ((read = await contentStream.ReadAsync(buffer)) > 0)
+            using (HttpResponseMessage response = await Http.GetAsync(downloadUrl, HttpCompletionOption.ResponseHeadersRead))
             {
-                await fileStream.WriteAsync(buffer.AsMemory(0, read));
-                totalRead += read;
-                if (totalBytes > 0)
+                response.EnsureSuccessStatusCode();
+                long totalBytes = response.Content.Headers.ContentLength ?? 0;
+
+                using Stream contentStream = await response.Content.ReadAsStreamAsync();
+                await using FileStream fileStream = new(tempZip, FileMode.Create, FileAccess.Write, FileShare.None, 8192, true);
+
+                byte[] buffer = new byte[8192];
+                long totalRead = 0;
+                int read;
+                while ((read = await contentStream.ReadAsync(buffer)) > 0)
                 {
-                    int percent = (int)((totalRead * 100) / totalBytes);
-                    onProgress(percent, "Downloading...");
+                    await fileStream.WriteAsync(buffer.AsMemory(0, read));
+                    totalRead += read;
+                    if (totalBytes > 0)
+                    {
+                        int percent = (int)((totalRead * 100) / totalBytes);
+                        onProgress(percent, "Downloading...");
+                    }
                 }
             }
+        }
+        catch (HttpRequestException ex)
+        {
+            throw new UpdateCheckException($"Network error during download: {ex.Message}", UpdateCheckErrorKind.Network, inner: ex);
+        }
+        catch (TaskCanceledException ex)
+        {
+            throw new UpdateCheckException($"Download timed out: {ex.Message}", UpdateCheckErrorKind.Timeout, inner: ex);
         }
 
         if (!string.IsNullOrWhiteSpace(sha256Url))
@@ -188,12 +199,16 @@ public sealed class UpdateService
                 if (!string.IsNullOrWhiteSpace(expected) && expected != actual)
                 {
                     File.Delete(tempZip);
-                    throw new InvalidOperationException("SHA256 mismatch");
+                    throw new InvalidOperationException("SHA256 mismatch: File integrity check failed. Please download again.");
                 }
             }
-            catch (Exception ex)
+            catch (HttpRequestException ex)
             {
-                Debug.WriteLine($"SHA256 verification failed: {ex.Message}");
+                Debug.WriteLine($"SHA256 download failed (non-fatal): {ex.Message}");
+            }
+            catch (Exception ex) when (ex is not InvalidOperationException)
+            {
+                Debug.WriteLine($"SHA256 verification failed (non-fatal): {ex.Message}");
             }
         }
 
@@ -277,13 +292,19 @@ try {
             $copied = $true
             break
         } catch {
-            Log ""Copy attempt failed: $($_.Exception.Message)""
+            $errMsg = $_.Exception.Message
+            Log ""Copy attempt failed: $errMsg""
+            if ($errMsg -match 'being used by another process') {
+                Log ""File locked - another app may be using CliHere""
+            } elseif ($errMsg -match 'Access to the path.*is denied') {
+                Log ""Permission denied - may need admin rights""
+            }
             $retry--
             Start-Sleep -Seconds 2
         }
     }
 
-    if (-not $copied) { throw ""Failed to copy update files after retries."" }
+    if (-not $copied) { throw ""Failed to copy update files after 5 retries. The app may need to be reinstalled manually."" }
     Log ""Files copied successfully""
 
     $exePath = Join-Path $installDir $exeName

@@ -2,6 +2,20 @@
 
 ## 2026-06-16
 
+- 작업: 자동 업데이트 UX 고도화 - 다이얼로그 현지화, 오류 메시지 강화
+- 변경 파일:
+  - src/CliHere.App/Views/UpdateDialog.xaml (하드코딩 텍스트 제거)
+  - src/CliHere.App/Views/UpdateDialog.xaml.cs (현지화된 문자열 파라미터 추가)
+  - src/CliHere.App/ViewModels/MainViewModel.cs (현지화된 문자열 전달)
+  - src/CliHere.App/Services/UpdateService.cs (네트워크/타임아웃/파일잠금 오류 메시지 강화)
+  - src/CliHere.App/Resources/Languages/ko.json (업데이트 다이얼로그 문자열 추가)
+  - src/CliHere.App/Resources/Languages/en.json (업데이트 다이얼로그 문자열 추가)
+  - HISTORY.md
+- 검증:
+  - dotnet build --configuration Release (성공)
+  - dotnet test --configuration Release (21/21 통과)
+- 결과: 성공
+
 - 작업: Gemini CLI → AntiGravity CLI 이름 변경, 신규 CLI 추가, 레지스트리 아이콘 표시 문제 수정, 런칭 안정성 강화
 - 변경 파일:
   - src/CliHere.App/Services/CliDefinitionService.cs (gemini → agy, Cursor/Windsurf/Aider/Continue/Cline 추가)
