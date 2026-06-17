@@ -39,4 +39,7 @@ public sealed class AppSettings
     public List<CustomCliDefinition> CustomCliDefinitions { get; set; } = [];
     public List<CliProfile> Profiles { get; set; } = [];
     public string? LastSelectedProfileId { get; set; }
+    public List<CliHistoryEntry> History { get; set; } = [];
+    public List<CliGroup> Groups { get; set; } = [];
+    public List<CliLogEntry> Logs { get; set; } = [];
 }
